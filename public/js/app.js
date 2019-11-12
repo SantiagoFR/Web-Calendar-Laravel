@@ -1908,12 +1908,19 @@ __webpack_require__.r(__webpack_exports__);
     getUsers: function getUsers() {
       var _this = this;
 
-      return axios.get("/users/provide", {
+      axios.get("/users/provide", {
         _method: "GET"
       }).then(function (response) {
         var items = response.data;
         console.log(response.data);
         _this.users = items;
+      });
+    },
+    eliminar: function eliminar(id) {
+      var _this2 = this;
+
+      axios["delete"]('/users/' + id).then(function (response) {
+        _this2.getUsers();
       });
     }
   },
@@ -66793,9 +66800,11 @@ var render = function() {
                   _c(
                     "b-button",
                     {
-                      attrs: {
-                        variant: "danger",
-                        href: "users/" + data.item.id + "/destroy"
+                      attrs: { variant: "danger" },
+                      on: {
+                        click: function($event) {
+                          return _vm.eliminar(data.item.id)
+                        }
                       }
                     },
                     [_vm._v("Eliminar")]
@@ -79201,8 +79210,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /home/sfr2702/Proyectos/tfg/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /home/sfr2702/Proyectos/tfg/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /home/sfr2702/Proyectos/TFG/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /home/sfr2702/Proyectos/TFG/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

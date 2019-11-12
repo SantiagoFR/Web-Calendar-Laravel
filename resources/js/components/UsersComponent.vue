@@ -4,7 +4,7 @@
             <b-table striped borderless hover :items="users" :fields="fields">                
                 <template v-slot:cell(actions)="data">
                     <b-button v-bind:href="'users/'+data.item.id+'/edit'">Editar</b-button>
-                    <b-button variant="danger" v-bind:href="'users/'+data.item.id+'/destroy'">Eliminar</b-button>
+                    <b-button variant="danger" @click="eliminar(data.item.id)">Eliminar</b-button>
                 </template>
             </b-table>
         </div>
@@ -36,15 +36,20 @@ export default {
     },
     methods: {
         getUsers() {
-            return axios
-                .get("/users/provide", {
-                    _method: "GET"
-                })
-                .then(response => {
-                    const items = response.data;
-                    console.log(response.data);
-                    this.users = items;
-                });
+            axios.get("/users/provide", {
+                _method: "GET"
+            })
+            .then(response => {
+                const items = response.data;
+                console.log(response.data);
+                this.users = items;
+            });
+        },
+        eliminar(id){
+            axios.delete('/users/' + id)
+            .then(response => {
+                this.getUsers();
+            });
         }
     },
     mounted() {

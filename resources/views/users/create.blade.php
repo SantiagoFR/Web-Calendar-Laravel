@@ -22,11 +22,7 @@
                         {!! Form::label('name', 'Nombre', ['class'=>'col-sm-3 col-form-label']) !!}
                         <div class="col-sm-9">
                             {!! Form::text('name', old('name'), ['class'=>'form-control']) !!}
-                            @error('name')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
+                         
                         </div>
 
                     </div>
@@ -40,11 +36,7 @@
                         {!! Form::label('password', 'Contraseña', ['class'=>'col-sm-3 col-form-label']) !!}
                         <div class="col-sm-9">
                             {!! Form::password('password', ['class'=>'form-control']) !!}
-                            @error('password')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
+                           
                         </div>
 
                     </div>
@@ -53,11 +45,7 @@
                         col-form-label']) !!}
                         <div class="col-sm-9">
                             {!! Form::password('password_confirmation', ["class"=>"form-control"]) !!}
-                            @error('password_confirmation')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
+                         
                         </div>
 
                     </div>

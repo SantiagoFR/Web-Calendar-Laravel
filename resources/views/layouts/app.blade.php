@@ -25,45 +25,47 @@
 
 <body>
     <div id="app">
-        <div style="background-color:#241654">
-            <a href="{{ route('home') }}"><img src="{{ asset('images/logo2.png') }}" style="height:100px"></a>
-        </div>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-            <div class="container">
+            <div style="background-color:#241654">
+                <a href="{{ route('home') }}"><img src="{{ asset('images/logo2.png') }}" style="height:100px"></a>
+            </div>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+                <div class="container">
 
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
-                        @if (Auth::check())
-                        <li class="nav-item active">
-                            <a class="nav-link" href="{{ route('home') }}">Inicio </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('users.index') }}">Admin</a>
-                        </li>
-                        <li class="nav-item" data-toggle="tooltip" data-placement="top" title="Cerrar sesión">
-                            <a class="nav-link" class="item" href="#" onclick="event.preventDefault();
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            @if (Auth::check())
+                            <li class="nav-item navbar-brand">
+                                <a class="nav-link" href="{{ route('home') }}">Inicio </a>
+                            </li>
+                            <li class="nav-item navbar-brand">
+                                <a class="nav-link" href="{{ route('users.index') }}">Admin</a>
+                            </li>
+                            <li class="nav-item navbar-brand" data-toggle="tooltip" data-placement="top"
+                                title="Cerrar sesión">
+                                <a class="nav-link" class="item" href="#" onclick="event.preventDefault();
                                 document.getElementById('logout-form').submit();">
-                                Logout
-                            </a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                @csrf
-                            </form>
-                        </li>
-                        @else
-                            <li class="nav-item">
+                                    Logout
+                                </a>
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                    style="display: none;">
+                                    @csrf
+                                </form>
+                            </li>
+                            @else
+                            <li class="nav-item navbar-brand">
                                 <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
                             </li>
                             @if (Route::has('register'))
-                            <li class="nav-item">
+                            <li class="nav-item navbar-brand">
                                 <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
                             </li>
                             @endif
-                        @endif
-                    </ul>
+                            @endif
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </nav>
-        <br>
+            </nav>
+            <br>
         @yield('content')
     </div>
 </body>
