@@ -18,3 +18,6 @@ Route::get('/', 'HomeController@index')->name('home');
 
 Route::get('/users/provide', 'UserController@provide')->name('users.provide');
 Route::resource('users', 'UserController');
+
+Route::get('/eventos/provide','EventoController@provide')->name('eventos.provide');
+Route::resource('eventos', 'EventoController');

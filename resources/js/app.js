@@ -8,9 +8,13 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 import BootstrapVue from 'bootstrap-vue'
+import VueFullCalendar from '@fullcalendar/vue'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
+
 Vue.use(BootstrapVue)
+Vue.use(VueFullCalendar)
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -24,6 +28,14 @@ Vue.use(BootstrapVue)
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 Vue.component('users-component', require('./components/UsersComponent.vue').default);
+Vue.component('eventos-component', require('./components/EventosComponent.vue').default);
+
+import $ from 'jquery';
+import 'jquery-ui/ui/i18n/datepicker-es'
+import 'jquery-ui/themes/base/all.css'
+import 'jquery-datetimepicker/build/jquery.datetimepicker.full.js'
+import 'jquery-datetimepicker/jquery.datetimepicker.css'
+import moment from 'moment/moment.js'
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -33,4 +45,34 @@ Vue.component('users-component', require('./components/UsersComponent.vue').defa
 
 const app = new Vue({
     el: '#app',
+});
+
+$("#datepicker").datetimepicker();
+    
+
+$(function () {
+    var from = $("#from")
+            .datetimepicker({
+                format: 'd/m/Y H:i',
+                closeOnTimeSelect: true,
+                step: 10,
+            })
+            .on("change", function () {
+                to.datetimepicker("setOptions", {
+                    minDate: moment(this.value,"DD/MM/YYYY HH:mm").format("YYYY-MM-DD"),
+                    minTime: moment(this.value,"DD/MM/YYYY HH:mm").format("HH:mm:ss")
+                });
+            }),
+        to = $("#to").datetimepicker({
+            format: 'd/m/Y H:i',
+            closeOnTimeSelect: true,
+            step: 10,
+        })
+            .on("change", function () {
+                from.datetimepicker("setOptions", {
+                    maxDate: moment(this.value,"DD/MM/YYYY HH:mm").format("YYYY-MM-DD"),
+                    maxTime: moment(this.value,"DD/MM/YYYY HH:mm").format("HH:mm:ss")
+                });
+            });
+
 });

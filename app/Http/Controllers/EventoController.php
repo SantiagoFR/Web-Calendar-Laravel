@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Evento;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class EventoController extends Controller
 {
@@ -14,7 +15,7 @@ class EventoController extends Controller
      */
     public function index()
     {
-        //
+        return view('eventos.index');
     }
 
     /**
@@ -24,7 +25,7 @@ class EventoController extends Controller
      */
     public function create()
     {
-        //
+        return view('eventos.create');
     }
 
     /**
@@ -35,18 +36,13 @@ class EventoController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Evento  $evento
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Evento $evento)
-    {
-        //
+        $evento = new Evento();
+        $evento->title = $request->title;
+        $evento->description = $request->description;
+        $evento->start = Carbon::createFromFormat('d/m/Y G:i',$request->start);
+        $evento->end = Carbon::createFromFormat('d/m/Y G:i',$request->end);
+        $evento->save();
+        return redirect()->route('eventos.index');
     }
 
     /**
@@ -57,7 +53,7 @@ class EventoController extends Controller
      */
     public function edit(Evento $evento)
     {
-        //
+        return view('eventos.edit',compact('evento'));
     }
 
     /**
@@ -69,7 +65,12 @@ class EventoController extends Controller
      */
     public function update(Request $request, Evento $evento)
     {
-        //
+        $evento->title = $request->title;
+        $evento->description = $request->description;
+        $evento->start = Carbon::createFromFormat('d/m/Y G:i',$request->start);
+        $evento->end = Carbon::createFromFormat('d/m/Y G:i',$request->end);
+        $evento->save();
+        return redirect()->route('eventos.index');
     }
 
     /**
@@ -81,5 +82,10 @@ class EventoController extends Controller
     public function destroy(Evento $evento)
     {
         //
+    }
+
+    public function provide(Request $request)
+    {
+        return response()->json(Evento::select('id','title','description','start','end')->get());
     }
 }
