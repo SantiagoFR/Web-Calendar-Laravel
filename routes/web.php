@@ -20,4 +20,7 @@ Route::get('/users/provide', 'UserController@provide')->name('users.provide');
 Route::resource('users', 'UserController');
 
 Route::get('/eventos/provide','EventoController@provide')->name('eventos.provide');
-Route::resource('eventos', 'EventoController');
+Route::get('/eventos/{evento}/destroy','EventoController@destroy')->name('eventos.destroy');
+Route::resource('eventos', 'EventoController')->except(['destroy','show']);
+
+Route::resource('etiquetas', 'EtiquetaController');

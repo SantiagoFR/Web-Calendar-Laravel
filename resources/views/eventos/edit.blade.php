@@ -13,7 +13,7 @@
     <div class="row">
         <div class="col-sm">
             <p><strong>Descripción</strong></p>            
-            {!! Form::textarea('description', old('description'), ['class'=>'form-control']) !!}
+            {!! Form::textarea('description', old('description'), ['id'=>'ckeditor']) !!}
         </div>
     </div>
     <div class="row">
@@ -27,6 +27,7 @@
             {!! Form::text('end', old('end'), ['class'=>'form-control','id'=>'to']) !!}
         </div>
     </div>
+    
     <br>
     <div align="center">
         {!! Form::submit('Aceptar', ['class'=>'btn btn-primary']) !!}
@@ -35,4 +36,5 @@
 
     {!! Form::close() !!}
 </div>
+@include('javascript.ckeditor')
 @endsection

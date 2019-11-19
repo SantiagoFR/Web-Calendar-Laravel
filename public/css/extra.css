@@ -65,3 +65,6 @@ body {
 .table-title{
     background: #241654;
 }
+.ck-editor__editable {
+    min-height: 180px;
+}

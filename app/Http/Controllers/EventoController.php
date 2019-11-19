@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Evento;
+use App\Etiqueta;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -25,7 +26,8 @@ class EventoController extends Controller
      */
     public function create()
     {
-        return view('eventos.create');
+        $etiquetas = Etiqueta::select('id','name')->pluck('name','id');
+        return view('eventos.create',compact('etiquetas'));
     }
 
     /**
@@ -36,11 +38,13 @@ class EventoController extends Controller
      */
     public function store(Request $request)
     {
+        
         $evento = new Evento();
         $evento->title = $request->title;
         $evento->description = $request->description;
         $evento->start = Carbon::createFromFormat('d/m/Y G:i',$request->start);
         $evento->end = Carbon::createFromFormat('d/m/Y G:i',$request->end);
+        $evento->etiqueta_id = $request->etiqueta;
         $evento->save();
         return redirect()->route('eventos.index');
     }
@@ -81,7 +85,8 @@ class EventoController extends Controller
      */
     public function destroy(Evento $evento)
     {
-        //
+        $evento->delete();
+        return redirect()->route('eventos.index');
     }
 
     public function provide(Request $request)

@@ -22,4 +22,8 @@ class Evento extends Model
     {
         return Carbon::parse($end)->format('d/m/Y G:i');
     }
+    public function etiqueta()
+    {
+        return $this->belongsTo(Etiqueta::class);
+    }
 }

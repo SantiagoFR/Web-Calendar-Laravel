@@ -21,10 +21,8 @@
                     <div class="form-group row">
                         {!! Form::label('name', 'Nombre', ['class'=>'col-sm-3 col-form-label']) !!}
                         <div class="col-sm-9">
-                            {!! Form::text('name', old('name'), ['class'=>'form-control']) !!}
-                         
+                            {!! Form::text('name', old('name'), ['class'=>'form-control']) !!}                         
                         </div>
-
                     </div>
                     <div class="form-group row">
                         {!! Form::label('email', 'Email', ['class'=>'col-sm-3 col-form-label']) !!}
@@ -35,19 +33,15 @@
                     <div class="form-group row">
                         {!! Form::label('password', 'Contraseña', ['class'=>'col-sm-3 col-form-label']) !!}
                         <div class="col-sm-9">
-                            {!! Form::password('password', ['class'=>'form-control']) !!}
-                           
+                            {!! Form::password('password', ['class'=>'form-control']) !!}                           
                         </div>
-
                     </div>
                     <div class="form-group row">
                         {!! Form::label('password_confirmation', 'Repita contraseña', ['class'=>'col-sm-3
                         col-form-label']) !!}
                         <div class="col-sm-9">
-                            {!! Form::password('password_confirmation', ["class"=>"form-control"]) !!}
-                         
+                            {!! Form::password('password_confirmation', ["class"=>"form-control"]) !!}                         
                         </div>
-
                     </div>
                 </div>
                 <div class="card-footer">

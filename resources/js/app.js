@@ -7,6 +7,7 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
+Vue.config.silent = true
 import BootstrapVue from 'bootstrap-vue'
 import VueFullCalendar from '@fullcalendar/vue'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
@@ -48,31 +49,32 @@ const app = new Vue({
 });
 
 $("#datepicker").datetimepicker();
-    
+
+
 
 $(function () {
     var from = $("#from")
-            .datetimepicker({
-                format: 'd/m/Y H:i',
-                closeOnTimeSelect: true,
-                step: 10,
-            })
-            .on("change", function () {
-                to.datetimepicker("setOptions", {
-                    minDate: moment(this.value,"DD/MM/YYYY HH:mm").format("YYYY-MM-DD"),
-                    minTime: moment(this.value,"DD/MM/YYYY HH:mm").format("HH:mm:ss")
-                });
-            }),
-        to = $("#to").datetimepicker({
+        .datetimepicker({
             format: 'd/m/Y H:i',
             closeOnTimeSelect: true,
             step: 10,
         })
-            .on("change", function () {
-                from.datetimepicker("setOptions", {
-                    maxDate: moment(this.value,"DD/MM/YYYY HH:mm").format("YYYY-MM-DD"),
-                    maxTime: moment(this.value,"DD/MM/YYYY HH:mm").format("HH:mm:ss")
-                });
+        .on("change", function () {
+            to.datetimepicker("setOptions", {
+                minDate: moment(this.value,"DD/MM/YYYY HH:mm").format("YYYY-MM-DD"),
+                minTime: moment(this.value,"DD/MM/YYYY HH:mm").format("HH:mm:ss")
             });
+        }),
+    to = $("#to").datetimepicker({
+        format: 'd/m/Y H:i',
+        closeOnTimeSelect: true,
+        step: 10,
+    })
+        .on("change", function () {
+            from.datetimepicker("setOptions", {
+                maxDate: moment(this.value,"DD/MM/YYYY HH:mm").format("YYYY-MM-DD"),
+                maxTime: moment(this.value,"DD/MM/YYYY HH:mm").format("HH:mm:ss")
+            });
+        });
 
 });
