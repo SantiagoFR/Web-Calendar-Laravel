@@ -15,7 +15,9 @@ class CreateEtiquetasTable extends Migration
     {
         Schema::create('etiquetas', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name');            
+            $table->string('name');
+            $table->boolean('exclusive')->nullable()->default(false);
+            $table->boolean('approval')->nullable()->default(false);    
             $table->timestamps();
         });
     }

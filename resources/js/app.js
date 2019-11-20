@@ -33,11 +33,9 @@ Vue.component('eventos-component', require('./components/EventosComponent.vue').
 
 import $ from 'jquery';
 import 'jquery-ui/ui/i18n/datepicker-es'
-import 'jquery-ui/themes/base/all.css'
 import 'jquery-datetimepicker/build/jquery.datetimepicker.full.js'
-import 'jquery-datetimepicker/jquery.datetimepicker.css'
 import moment from 'moment/moment.js'
-
+import 'select2/dist/js/select2.full.js'
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

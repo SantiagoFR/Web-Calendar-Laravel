@@ -17,24 +17,56 @@
             <thead>
                 <tr>
                     <th>Nombre</th>
+                    <th>Exclusividad</th>
+                    <th>Aprobación</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($etiquetas as $etiqueta)
                 <tr>
                     <td>{{ $etiqueta->name }}</td>
+                    <td>@if($etiqueta->exclusive) Si @else No @endif</td>
+                    <td>@if($etiqueta->approval) Si @else No @endif</td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
+    <div align="center">
+        <a href="{{ route('eventos.index') }}" class="btn btn-secondary">Atrás</a>
+    </div>
 </div>
 <script type="text/javascript">
-    $(function () {
-        $('#newEtiqueta').click(function(){
-            Swal.fire({
-                title: "titulo",           
-            });
+    $(document).ready(function () {
+        $('#newEtiqueta').click(async function(){    
+            const { value: formValues } = await Swal.fire({
+                title: 'Nueva etiqueta',
+                html:
+                    '<label for="input1">Nombre</label>'+
+                    '<input id="input1" name="name" class="swal2-input">'+
+                    '<label for="checkbox1">Exclusividad</label>'+
+                    '<input type="checkbox" name="exclusive" value="1" id="checkbox1">'+
+                    '<label for="checkbox2">Aprobación</label>'+
+                    '<input type="checkbox" name="approval" value="1" id="checkbox2">',
+                focusConfirm: false,
+                preConfirm: () => {
+                    return {
+                        name:document.getElementById('input1').value,
+                        exclusive:$('#checkbox1').is(':checked'),
+                        approval:$('#checkbox2').is(':checked'),
+                    }
+                }
+            })
+            if (formValues) {
+                axios.post('/etiquetas',{
+                    _method: "POST",
+                    formValues: formValues                
+                }).then(response => {
+                    console.log(response)
+                    window.location.reload(false);
+                });
+            }
+        
         })
     });
     

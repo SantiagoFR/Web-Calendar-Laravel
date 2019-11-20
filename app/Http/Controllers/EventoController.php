@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Evento;
 use App\Etiqueta;
+use App\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class EventoController extends Controller
 {
@@ -26,8 +28,10 @@ class EventoController extends Controller
      */
     public function create()
     {
-        $etiquetas = Etiqueta::select('id','name')->pluck('name','id');
-        return view('eventos.create',compact('etiquetas'));
+        
+        $usuarios = User::select('name')->get()->pluck('name','name');
+        $etiquetas = Etiqueta::select('id', 'name')->pluck('name', 'id');
+        return view('eventos.create', compact('etiquetas','usuarios'));
     }
 
     /**
@@ -38,14 +42,16 @@ class EventoController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         $evento = new Evento();
         $evento->title = $request->title;
         $evento->description = $request->description;
-        $evento->start = Carbon::createFromFormat('d/m/Y G:i',$request->start);
-        $evento->end = Carbon::createFromFormat('d/m/Y G:i',$request->end);
+        $evento->start = Carbon::createFromFormat('d/m/Y G:i', $request->start);
+        $evento->end = Carbon::createFromFormat('d/m/Y G:i', $request->end);
         $evento->etiqueta_id = $request->etiqueta;
+        $evento->creator_id = Auth::user()->id;
         $evento->save();
+        $evento->user()->attach(Auth::user());
         return redirect()->route('eventos.index');
     }
 
@@ -57,7 +63,7 @@ class EventoController extends Controller
      */
     public function edit(Evento $evento)
     {
-        return view('eventos.edit',compact('evento'));
+        return view('eventos.edit', compact('evento'));
     }
 
     /**
@@ -71,8 +77,8 @@ class EventoController extends Controller
     {
         $evento->title = $request->title;
         $evento->description = $request->description;
-        $evento->start = Carbon::createFromFormat('d/m/Y G:i',$request->start);
-        $evento->end = Carbon::createFromFormat('d/m/Y G:i',$request->end);
+        $evento->start = Carbon::createFromFormat('d/m/Y G:i', $request->start);
+        $evento->end = Carbon::createFromFormat('d/m/Y G:i', $request->end);
         $evento->save();
         return redirect()->route('eventos.index');
     }
@@ -91,6 +97,7 @@ class EventoController extends Controller
 
     public function provide(Request $request)
     {
-        return response()->json(Evento::select('id','title','description','start','end')->get());
+        return response()->json(Evento::select('id', 'title', 'description', 'start', 'end', 'creator_id')
+            ->with('creator')->get());
     }
 }

@@ -4,7 +4,6 @@
     <h1>Eventos</h1>
     <div class="row justify-content-center">
         <div class="col-sm">
-
             <eventos-component></eventos-component>
         </div>
     </div>

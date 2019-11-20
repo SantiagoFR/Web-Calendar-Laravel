@@ -12,6 +12,7 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
     <script src="{{ asset('vendor/ckeditor/ckeditor.js') }}"></script>
 
     <!-- Fonts -->
@@ -83,6 +84,9 @@
     <div id="app">
         @yield('content')
     </div>
+    <br>
+    <hr>
+    <br>
 </body>
 
 </html>

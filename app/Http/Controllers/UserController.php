@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Etiqueta;
+use App\Evento;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -48,7 +51,11 @@ class UserController extends Controller
             'password' => ['required', 'string', 'min:5', 'confirmed'],
         ]);
 
-        $user = User::create($request->all());
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->save();
         return redirect()->route('users.index');
     }
 

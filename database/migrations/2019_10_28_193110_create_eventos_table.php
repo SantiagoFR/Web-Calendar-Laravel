@@ -28,7 +28,8 @@ class CreateEventosTable extends Migration
             $table->boolean('eventDurationEditable')->nullable();
             $table->boolean('resourceEditable')->nullable();
             $table->boolean('overlap')->nullable();
-            $table->boolean('etiqueta_id')->nullable();
+            $table->bigInteger('etiqueta_id')->nullable();
+            $table->bigInteger('creator_id')->nullable();
             $table->timestamps();
         });
     }

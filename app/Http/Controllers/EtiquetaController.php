@@ -36,7 +36,13 @@ class EtiquetaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $etiqueta = new Etiqueta();
+        $etiqueta->name = $request->formValues['name'];
+        $etiqueta->exclusive = $request->formValues['exclusive'];
+        $etiqueta->approval = $request->formValues['approval'];
+        $etiqueta->save();
+         
+        return "Success";
     }
 
     /**
