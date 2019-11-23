@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Collective\Html\Eloquent\FormAccessible;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class Evento extends Model
 {
@@ -13,7 +14,7 @@ class Evento extends Model
     protected $dates = [
         'start'
     ];
-    protected $appends = ['full_description'];
+    protected $appends = ['full_description','belongs'];
     public function formStartAttribute($start)
     {
         return Carbon::parse($start)->format('d/m/Y G:i');
@@ -35,6 +36,17 @@ class Evento extends Model
     {
         return $this->belongsToMany(User::class);
     }
+    public function formUsuariosAttribute($usuarios)
+    {
+        return $this->user;
+    }
+    public function getBelongsAttribute(){
+        if(Auth::user()->id == $this->creator_id)return true;
+        dump($this->title);
+        dump(in_array(Auth::user()->id,$this->user()->select('users.id')->get()->pluck('id')->toArray()));
+        if(in_array(Auth::user()->id,$this->user()->select('users.id')->get()->pluck('id')->toArray()))return true;
+        return false; 
+    }
     public function getFullDescriptionAttribute()
     {
         if(isset($this->etiqueta)){
@@ -42,12 +54,6 @@ class Evento extends Model
         }else{
             $etiqueta = "";
         }
-        //con usuario funciona pero con etiqueta no????
-        if(isset($this->user)){
-            $user = $this->user->first()->name;
-        }else{
-            $user = "";
-        }
-        return "<p>".$this->description."</p>"."<p>Etiqueta: ".$etiqueta."</p>";
+        return $this->description."<p><strong>Etiqueta: </strong>".$etiqueta."</p>";
     }
 }

@@ -28,10 +28,10 @@ class EventoController extends Controller
      */
     public function create()
     {
-        
-        $usuarios = User::select('name')->get()->pluck('name','name');
+
+        $usuarios = User::select('name','id')->where('id',"!=",Auth::user()->id)->get()->pluck('name', 'id');
         $etiquetas = Etiqueta::select('id', 'name')->pluck('name', 'id');
-        return view('eventos.create', compact('etiquetas','usuarios'));
+        return view('eventos.create', compact('etiquetas', 'usuarios'));
     }
 
     /**
@@ -42,7 +42,7 @@ class EventoController extends Controller
      */
     public function store(Request $request)
     {
-
+        
         $evento = new Evento();
         $evento->title = $request->title;
         $evento->description = $request->description;
@@ -52,6 +52,7 @@ class EventoController extends Controller
         $evento->creator_id = Auth::user()->id;
         $evento->save();
         $evento->user()->attach(Auth::user());
+        $evento->user()->attach($request->usuarios);
         return redirect()->route('eventos.index');
     }
 
@@ -63,7 +64,11 @@ class EventoController extends Controller
      */
     public function edit(Evento $evento)
     {
-        return view('eventos.edit', compact('evento'));
+
+
+        $usuarios = User::select('name','id')->where('id',"!=",Auth::user()->id)->get()->pluck('name', 'id');
+        $etiquetas = Etiqueta::select('id', 'name')->pluck('name', 'id');
+        return view('eventos.edit', compact('evento','usuarios','etiquetas'));
     }
 
     /**
@@ -79,7 +84,12 @@ class EventoController extends Controller
         $evento->description = $request->description;
         $evento->start = Carbon::createFromFormat('d/m/Y G:i', $request->start);
         $evento->end = Carbon::createFromFormat('d/m/Y G:i', $request->end);
+        $evento->etiqueta_id = $request->etiqueta;
+        $evento->creator_id = Auth::user()->id;
         $evento->save();
+        $evento->user()->detach();
+        $evento->user()->attach(Auth::user());
+        $evento->user()->attach($request->usuarios);
         return redirect()->route('eventos.index');
     }
 
@@ -97,7 +107,7 @@ class EventoController extends Controller
 
     public function provide(Request $request)
     {
-        return response()->json(Evento::select('id', 'title', 'description', 'start', 'end', 'creator_id')
-            ->with('creator')->get());
+        return response()->json(Evento::select('id', 'title', 'description', 
+        'start', 'end','creator_id','etiqueta_id')->with('creator')->with('user')->get());
     }
 }

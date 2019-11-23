@@ -48,6 +48,10 @@ const app = new Vue({
 
 $("#datepicker").datetimepicker();
 
+$("#datepicker").attr('autocomplete','off');
+$("#from").attr('autocomplete','off');
+$("#to").attr('autocomplete','off');
+
 
 
 $(function () {

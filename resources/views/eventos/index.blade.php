@@ -4,7 +4,7 @@
     <h1>Eventos</h1>
     <div class="row justify-content-center">
         <div class="col-sm">
-            <eventos-component></eventos-component>
+            <eventos-component logged-user = "{{Auth::user()->id}}"></eventos-component>
         </div>
     </div>
 </div>

@@ -5,6 +5,7 @@ import esLocale from "@fullcalendar/core/locales/es";
 import Calendar from "@fullcalendar/core";
 
 export default {
+  props: ["loggedUser"],
   components: {
     FullCalendar
   },
@@ -31,7 +32,7 @@ export default {
         $(info.el).tooltip({
           title: "<strong><p>"+info.event.title+"</p></strong>"+
             info.event.extendedProps.full_description+
-            "<p>Creado por: "+info.event.extendedProps.creator.name,
+            "<p><strong>Creado por: </strong>"+info.event.extendedProps.creator.name+"</p>",
           placement: "top",
           trigger: "hover",
           container: "body",
@@ -41,7 +42,9 @@ export default {
     };
   },
   methods: {
+    
     eventClick: function(info) {
+      console.log(this.$refs.calendar.getApi().getEvents())
       var div = '<div align="center" id="swal-id"></div>';
       Swal.fire({
         title: info.event.title,
@@ -50,7 +53,8 @@ export default {
         footer: div
       });
       var col = document.getElementById("swal-id");
-      var edit =
+      if(this.loggedUser==info.event.extendedProps.creator_id){
+        var edit =
         '<a href="/eventos/' +
         info.event.id +
         '/edit" class="btn btn-secondary btn-footer">Editar</a>';
@@ -58,9 +62,15 @@ export default {
         '<a href="/eventos/' +
         info.event.id +
         '/destroy" class="btn btn-danger btn-footer">Eliminar</a>';
+        col.innerHTML += edit + delet
+      }
+      if(info.event.extendedProps.belongs){
+        col.innerHTML += "belongs";
+      }
+      
       var cancel =
         '<button class="btn btn-light btn-footer" onclick="Swal.close()">Atrás</button>';
-      col.innerHTML = edit + delet + cancel;
+      col.innerHTML += cancel;
     }
   }
 };
@@ -68,7 +78,9 @@ export default {
 
 <template>
   <div>
+
     <FullCalendar
+    ref="calendar"
       defaultView="dayGridMonth"
       :plugins="calendarPlugins"
       :customButtons="customButtons"
