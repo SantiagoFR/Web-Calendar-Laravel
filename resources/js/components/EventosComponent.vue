@@ -3,94 +3,97 @@ import FullCalendar from "@fullcalendar/vue";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import esLocale from "@fullcalendar/core/locales/es";
 import Calendar from "@fullcalendar/core";
+import rrulePlugin from "@fullcalendar/rrule";
 
 export default {
-  props: ["loggedUser"],
-  components: {
-    FullCalendar
-  },
-  data: function() {
-    return {
-      calendarPlugins: [dayGridPlugin],
-      titleFormat: "MMMM YYYY",
-      customButtons: {
-        newEventButton: {
-          text: "Nuevo Evento",
-          click: function() {
-            window.location.href = "/eventos/create";
-          }
-        }
-      },
+    props: ["loggedUser"],
+    components: {
+        FullCalendar
+    },
+    data: function() {
+        return {
+            calendarPlugins: [dayGridPlugin, rrulePlugin],
+            titleFormat: "MMMM YYYY",
+            customButtons: {
+                newEventButton: {
+                    text: "Nuevo Evento",
+                    click: function() {
+                        window.location.href = "/eventos/create";
+                    }
+                }
+            },
 
-      locale: esLocale,
-      header: {
-        left: "prev,next today ",
-        center: "title",
-        right: "newEventButton"
-      },
-      eventRender: function(info) {
-        $(info.el).tooltip({
-          title: "<strong><p>"+info.event.title+"</p></strong>"+
-            info.event.extendedProps.full_description+
-            "<p><strong>Creado por: </strong>"+info.event.extendedProps.creator.name+"</p>",
-          placement: "top",
-          trigger: "hover",
-          container: "body",
-          html: true
-        });
-      }
-    };
-  },
-  methods: {
-    
-    eventClick: function(info) {
-      console.log(this.$refs.calendar.getApi().getEvents())
-      var div = '<div align="center" id="swal-id"></div>';
-      Swal.fire({
-        title: info.event.title,
-        html: info.event.extendedProps.full_description,
-        showConfirmButton: false,
-        footer: div
-      });
-      var col = document.getElementById("swal-id");
-      if(this.loggedUser==info.event.extendedProps.creator_id){
-        var edit =
-        '<a href="/eventos/' +
-        info.event.id +
-        '/edit" class="btn btn-secondary btn-footer">Editar</a>';
-      var delet =
-        '<a href="/eventos/' +
-        info.event.id +
-        '/destroy" class="btn btn-danger btn-footer">Eliminar</a>';
-        col.innerHTML += edit + delet
-      }
-      if(info.event.extendedProps.belongs){
-        col.innerHTML += "belongs";
-      }
-      
-      var cancel =
-        '<button class="btn btn-light btn-footer" onclick="Swal.close()">Atrás</button>';
-      col.innerHTML += cancel;
+            locale: esLocale,
+            header: {
+                left: "prev,next today ",
+                center: "title",
+                right: "newEventButton"
+            },
+            eventRender: function(info) {
+                $(info.el).tooltip({
+                    title:
+                        "<strong><p>" +
+                        info.event.title +
+                        "</p></strong>" +
+                        info.event.extendedProps.full_description +
+                        "<p><strong>Creado por: </strong>" +
+                        info.event.extendedProps.creator.name +
+                        "</p>",
+                    placement: "top",
+                    trigger: "hover",
+                    container: "body",
+                    html: true
+                });
+            }
+        };
+    },
+    methods: {
+        eventClick: function(info) {
+            console.log(this.$refs.calendar.getApi().getEvents());
+            var div = '<div align="center" id="swal-id"></div>';
+            Swal.fire({
+                title: info.event.title,
+                html: info.event.extendedProps.full_description,
+                showConfirmButton: false,
+                footer: div
+            });
+            var col = document.getElementById("swal-id");
+            if (this.loggedUser == info.event.extendedProps.creator_id) {
+                var delet =
+                    '<a href="/eventos/' +
+                    info.event.id +
+                    '/destroy" class="btn btn-danger btn-footer">Eliminar</a>';
+                col.innerHTML += delet;
+            }
+            if (info.event.extendedProps.belongs) {
+                var edit =
+                    '<a href="/eventos/' +
+                    info.event.id +
+                    '/edit" class="btn btn-secondary btn-footer">Editar</a>';
+                col.innerHTML += edit;
+            }
+            var cancel =
+                '<button class="btn btn-light btn-footer" onclick="Swal.close()">Atrás</button>';
+            col.innerHTML += cancel;
+        }
     }
-  }
 };
 </script>
 
 <template>
-  <div>
-
-    <FullCalendar
-    ref="calendar"
-      defaultView="dayGridMonth"
-      :plugins="calendarPlugins"
-      :customButtons="customButtons"
-      :header="header"
-      :locale="locale"
-      :eventRender="eventRender"
-      @eventClick="eventClick"
-      events="/eventos/provide"
-    />
-  </div>
+    <div>
+        <FullCalendar
+            ref="calendar"
+            defaultView="dayGridMonth"
+            :plugins="calendarPlugins"
+            :customButtons="customButtons"
+            :header="header"
+            :locale="locale"
+            :eventRender="eventRender"
+            @eventClick="eventClick"
+            events="/eventos/provide"
+        />
+    </div>
 </template>
 
 <style lang='scss'>

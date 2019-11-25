@@ -11,6 +11,7 @@ Vue.config.silent = true
 import BootstrapVue from 'bootstrap-vue'
 import VueFullCalendar from '@fullcalendar/vue'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import 'rrule/dist/es5/rrule.js';
 
 
 Vue.use(BootstrapVue)
@@ -46,9 +47,15 @@ const app = new Vue({
     el: '#app',
 });
 
-$("#datepicker").datetimepicker();
+$("#datepicker").datetimepicker({
+    format: 'd/m/Y',
+    timepicker:false});
+$("#datetimepicker").datetimepicker({
+    format: 'd/m/Y H:i',
+});
 
 $("#datepicker").attr('autocomplete','off');
+$("#datetimepicker").attr('autocomplete','off');
 $("#from").attr('autocomplete','off');
 $("#to").attr('autocomplete','off');
 

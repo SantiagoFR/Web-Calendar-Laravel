@@ -12,9 +12,9 @@ class Evento extends Model
     use FormAccessible;
 
     protected $dates = [
-        'start'
+        'start',
     ];
-    protected $appends = ['full_description','belongs'];
+    protected $appends = ['full_description','belongs','rrule'];
     public function formStartAttribute($start)
     {
         return Carbon::parse($start)->format('d/m/Y G:i');
@@ -26,19 +26,15 @@ class Evento extends Model
     }
     public function etiqueta()
     {
-        return $this->belongsTo(Etiqueta::class);
+        return $this->belongsTo(Etiqueta::class)->select('etiquetas.id','name');
     }
     public function creator()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->select('name');
     }
     public function user()
     {
-        return $this->belongsToMany(User::class);
-    }
-    public function formUsuariosAttribute($usuarios)
-    {
-        return $this->user;
+        return $this->belongsToMany(User::class)->select('name');
     }
     public function getBelongsAttribute(){
         if(Auth::user()->id == $this->creator_id)return true;
@@ -55,5 +51,11 @@ class Evento extends Model
             $etiqueta = "";
         }
         return $this->description."<p><strong>Etiqueta: </strong>".$etiqueta."</p>";
+    }
+    public function getRruleAttribute()
+    {        
+        //$rrule = explode(";",$rrule);
+        dump($this->rrule);
+        return $this->rrule;
     }
 }
