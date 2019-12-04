@@ -50,7 +50,6 @@
                         <div class="col-sm-6">
                             <p><strong>Desde</strong></p>
                             {!! Form::text('start', old('start'), ['class'=>'form-control','id'=>'from']) !!}
-
                         </div>
                         <div class="col-sm-6">
                             <p><strong>Hasta</strong></p>
@@ -80,9 +79,7 @@
                             {!! Form::text('until', old('until'), ['class'=>'form-control','id'=>'datepicker']) !!}
 
                             <p><strong>Intervalo</strong></p>
-                            {!! Form::number('interval', old('interval'), ['class'=>'form-control']) !!}
-
-
+                            {!! Form::number('interval', old('interval'), ['class'=>'form-control','min'=>0]) !!}
                         </div>
                     </div>
                 </div>

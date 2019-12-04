@@ -73,22 +73,22 @@ class EventoController extends Controller
             $evento->start = Carbon::createFromFormat('d/m/Y G:i', $request->start);
             $evento->end = Carbon::createFromFormat('d/m/Y G:i', $request->end);
         } else {
-            $rrule=implode(";",[
+            $rrule = implode(";", [
                 $request->freq,
                 $request->interval,
-                implode(",",$request->byweekday),
+                implode(",", $request->byweekday),
                 $request->dtstart,
                 $request->until
-            ]);    
-            $evento->rrule = $rrule;
+            ]);
+            $evento->rrule_data = $rrule;
         }
         $evento->title = $request->title;
         $evento->description = $request->description;
         $evento->etiqueta_id = $request->etiqueta;
         $evento->creator_id = Auth::user()->id;
         $evento->save();
-        $evento->user()->attach(Auth::user());
-        $evento->user()->attach($request->users);
+        $evento->users()->attach(Auth::user());
+        $evento->users()->attach($request->users);
         return redirect()->route('eventos.index');
     }
 
@@ -100,11 +100,9 @@ class EventoController extends Controller
      */
     public function edit(Evento $evento)
     {
-
-
-        $usuarios = User::select('name', 'id')->where('id', "!=", Auth::user()->id)->get()->pluck('name', 'id');
+        $users = User::select('name', 'id')->where('id', "!=", Auth::user()->id)->get()->pluck('name', 'id');
         $etiquetas = Etiqueta::select('id', 'name')->pluck('name', 'id');
-        return view('eventos.edit', compact('evento', 'usuarios', 'etiquetas'));
+        return view('eventos.edit', compact('evento', 'users', 'etiquetas'));
     }
 
     /**
@@ -116,16 +114,30 @@ class EventoController extends Controller
      */
     public function update(Request $request, Evento $evento)
     {
+        
+        if (!$request->recursivo) {
+            $evento->start = Carbon::createFromFormat('d/m/Y G:i', $request->start);
+            $evento->end = Carbon::createFromFormat('d/m/Y G:i', $request->end);
+        } else {  
+            if(!empty($request->byweekday))$byweekday=implode(",", $request->byweekday);       
+            else $byweekday="";
+            $rrule = implode(";", [
+                $request->freq,
+                $request->interval,
+                $byweekday,
+                $request->dtstart,
+                $request->until
+            ]);
+            $evento->rrule_data = $rrule;
+        }
         $evento->title = $request->title;
         $evento->description = $request->description;
-        $evento->start = Carbon::createFromFormat('d/m/Y G:i', $request->start);
-        $evento->end = Carbon::createFromFormat('d/m/Y G:i', $request->end);
         $evento->etiqueta_id = $request->etiqueta;
         $evento->creator_id = Auth::user()->id;
         $evento->save();
-        $evento->user()->detach();
-        $evento->user()->attach(Auth::user());
-        $evento->user()->attach($request->usuarios);
+        $evento->users()->detach();
+        $evento->users()->attach(Auth::user());
+        $evento->users()->attach($request->users);
         return redirect()->route('eventos.index');
     }
 
@@ -142,16 +154,18 @@ class EventoController extends Controller
     }
 
     public function provide(Request $request)
-    {
-        return response()->json(Evento::select(
+    {                
+        $eventos = Evento::select(
             'id',
             'title',
             'description',
             'start',
             'end',
-            'rrule',
+            'rrule_data',
             'creator_id',
             'etiqueta_id'
-        )->with('creator')->with('user')->get());
+        )->with('creator')->with('etiqueta')->with('users')->get();
+            
+        return response()->json($eventos);
     }
 }

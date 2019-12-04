@@ -11,7 +11,7 @@ Vue.config.silent = true
 import BootstrapVue from 'bootstrap-vue'
 import VueFullCalendar from '@fullcalendar/vue'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
-import 'rrule/dist/es5/rrule.js';
+import 'rrule/dist/es5/rrule.min.js';
 
 
 Vue.use(BootstrapVue)
