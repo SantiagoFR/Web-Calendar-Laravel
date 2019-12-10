@@ -15,7 +15,7 @@ class Evento extends Model
         'start',
     ];
     protected $hidden = ['rrule_data','etiqueta_id',];
-    protected $appends = ['full_description','belongs','rrule','until','byweekday'];
+    protected $appends = ['full_description','belongs'];
     public function formStartAttribute($start)
     {
         if($start == null) return null;
@@ -31,20 +31,29 @@ class Evento extends Model
     {
         return $this->users()->get()->pluck('id');
     }
+    public function formUntilAttribute()
+    {
+        if ($this->rrule_data == null)return null;
+        return Carbon::parse($this->rrule['until'])->format("d/m/Y");
+    }
     public function getUntilAttribute()
     {
         if ($this->rrule_data == null)return null;
-        return Carbon::parse($this->rrule['until'])->format('d/m/Y');
+        return Carbon::parse($this->rrule['until']);
+    }
+    public function formDtstartAttribute()
+    {
+        if ($this->rrule_data == null)return null;
+        return Carbon::parse($this->rrule['dtstart'])->format("d/m/Y G:i");
     }
     public function getDtstartAttribute()
     {
         if ($this->rrule_data == null)return null;
-        return Carbon::parse($this->rrule['dtstart'])->format('d/m/Y G:i');
+        return Carbon::parse($this->rrule['dtstart']);
     }
-    public function getByweekdayAttribute()
+    public function formByweekdayAttribute()
     {        
         if ($this->rrule_data == null)return null;
-        return null;
         return explode(",",$this->rrule['byweekday']);
     }
 
@@ -62,7 +71,7 @@ class Evento extends Model
     }
     public function getBelongsAttribute(){
         if(Auth::user()->id == $this->creator_id)return true;
-        if(in_array(Auth::user()->id,$this->user()->select('users.id')->get()->pluck('id')->toArray()))return true;
+        if(in_array(Auth::user()->id,$this->users()->select('users.id')->get()->pluck('id')->toArray()))return true;
         return false; 
     }
     public function getFullDescriptionAttribute()
@@ -74,7 +83,7 @@ class Evento extends Model
         }
         return $this->description."<p><strong>Etiqueta: </strong>".$etiqueta."</p>";
     }
-    public function getDurationAttribute()
+    public function formDurationAttribute()
     {
         return "02:00";
     }
@@ -85,10 +94,6 @@ class Evento extends Model
         $until = Carbon::createFromFormat('d/m/Y',$rrule[4])->format("Y-m-d");   
         $dtstart = Carbon::createFromFormat('d/m/Y G:i',"$rrule[3]")->format('Y-m-d\TG:i:s');     
         return array( 'freq' => $rrule[0], 'interval' => $rrule[1], 
-        'dtstart' => $dtstart, 'until' => $until);
-        $dtstart = Carbon::createFromFormat('d/m/Y G:i',$rrule[3])->format('Ymd\THis\Z'); 
-        $until = Carbon::createFromFormat('d/m/Y',$rrule[4])->format("Ymd");
-        $result = "DTSTART:{$dtstart}\nRRULE:FREQ={$rrule[0]};INTERVAL={$rrule[1]};UNTIL={$until};BYDAY={$rrule[2]}";
-        return $result;
+        'dtstart' => $dtstart, 'until' => $until,'byweekday'=>$rrule[2]);
     }
 }

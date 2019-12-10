@@ -8,6 +8,8 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 
 class EventoController extends Controller
@@ -19,7 +21,9 @@ class EventoController extends Controller
      */
     public function index()
     {
-        return view('eventos.index');
+        $usuarios = User::select('name','id')->pluck('name','id');
+        $etiquetas = Etiqueta::select('name','id')->pluck('name','id');
+        return view('eventos.index',compact('usuarios','etiquetas'));
     }
 
     /**
@@ -102,6 +106,7 @@ class EventoController extends Controller
     {
         $users = User::select('name', 'id')->where('id', "!=", Auth::user()->id)->get()->pluck('name', 'id');
         $etiquetas = Etiqueta::select('id', 'name')->pluck('name', 'id');
+
         return view('eventos.edit', compact('evento', 'users', 'etiquetas'));
     }
 
@@ -114,13 +119,13 @@ class EventoController extends Controller
      */
     public function update(Request $request, Evento $evento)
     {
-        
+
         if (!$request->recursivo) {
             $evento->start = Carbon::createFromFormat('d/m/Y G:i', $request->start);
             $evento->end = Carbon::createFromFormat('d/m/Y G:i', $request->end);
-        } else {  
-            if(!empty($request->byweekday))$byweekday=implode(",", $request->byweekday);       
-            else $byweekday="";
+        } else {
+            if (!empty($request->byweekday)) $byweekday = implode(",", $request->byweekday);
+            else $byweekday = "";
             $rrule = implode(";", [
                 $request->freq,
                 $request->interval,
@@ -154,18 +159,38 @@ class EventoController extends Controller
     }
 
     public function provide(Request $request)
-    {                
-        $eventos = Evento::select(
-            'id',
-            'title',
-            'description',
-            'start',
-            'end',
-            'rrule_data',
-            'creator_id',
-            'etiqueta_id'
-        )->with('creator')->with('etiqueta')->with('users')->get();
-            
+    {
+        $start = Carbon::parse($request->start);
+        $end = Carbon::parse($request->end);
+
+        $eventos = Evento::selectRaw('id,title,description,start,end,creator_id,etiqueta_id')
+            ->whereraw("rrule_data is null AND start > '{$start}' AND end < '{$end}'")->with('creator')->get();
+        dump($start, $end);
+        $eventos_recursivos = Evento::selectRaw('id,title,description,creator_id,etiqueta_id,rrule_data')
+            ->whereraw("rrule_data is not null")->with('creator')->get()->filter(function ($evento) use ($start) {
+                return $evento->dtstart > $start;
+            });
+        //throw new Exception()  
+        foreach ($eventos_recursivos as $evento) {
+            $until = Carbon::parse($evento->rrule['until']);
+            if ($until > $end) {
+                $until = $end;
+            }
+            $dtstart = Carbon::parse($evento->rrule['dtstart']);
+            $period = CarbonPeriod::create($dtstart, "{$evento->rrule['interval']} {$evento->rrule['freq']}s", $until);
+            foreach ($period as $date) {
+                $newEvento = new Evento();
+                $newEvento->id = $evento->id;
+                $newEvento->title = $evento->title;
+                $newEvento->description = $evento->description;
+                $newEvento->start = $date;
+                $newEvento->etiqueta_id = $evento->etiqueta_id;
+                $newEvento->creator = $evento->creator;
+                $newEvento->end = $date->addHour()->format("Y-m-d G:i");
+                $eventos->push($newEvento);
+            }
+        }
+
         return response()->json($eventos);
     }
 }

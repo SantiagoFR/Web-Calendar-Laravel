@@ -71,7 +71,7 @@
 
                             <p><strong>Frecuencia</strong></p>
                             {!! Form::select('freq',
-                            ['daily'=>'Diariamente','weekly'=>'Semanalmente','monthly'=>'Mensualmente'], old('freq'),
+                            ['day'=>'Diariamente','week'=>'Semanalmente','month'=>'Mensualmente'], old('freq'),
                             ['class'=>'select2']) !!}
                         </div>
                         <div class="col-sm-6">

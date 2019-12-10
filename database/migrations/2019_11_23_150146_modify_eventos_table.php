@@ -32,8 +32,12 @@ class ModifyEventosTable extends Migration
      */
     public function down()
     {
-        Schema::table('eventos', function (Blueprint $table) {
-            //
+        Schema::table('eventos', function (Blueprint $table) {                     
+            $table->string('startEditable');
+            $table->string('eventResizableFromStart');
+            $table->string('eventDurationEditable');
+            $table->string('resourceEditable');
+            $table->dropColumn('rrule');
         });
     }
 }

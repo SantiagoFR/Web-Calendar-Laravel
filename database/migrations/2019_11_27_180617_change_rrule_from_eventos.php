@@ -27,7 +27,7 @@ class ChangeRruleFromEventos extends Migration
     public function down()
     {
         Schema::table('eventos', function (Blueprint $table) {
-            //
+            $table->renameColumn('rrule_data', 'rrule');
         });
     }
 }

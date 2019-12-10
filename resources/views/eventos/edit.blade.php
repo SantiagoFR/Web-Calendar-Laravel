@@ -72,15 +72,18 @@
 
                             <p><strong>Frecuencia</strong></p>
                             {!! Form::select('freq',
-                            ['daily'=>'Diariamente','weekly'=>'Semanalmente','monthly'=>'Mensualmente'], $evento->rrule['freq'],
+                            ['day'=>'Diariamente','week'=>'Semanalmente','month'=>'Mensualmente'],
+                            $evento->rrule['freq'],
                             ['class'=>'select2']) !!}
                         </div>
                         <div class="col-sm-6">
                             <p><strong>Hasta</strong></p>
-                            {!! Form::text('until', old('until'), ['class'=>'form-control','id'=>'datepicker']) !!}
+                            {!! Form::text('until', old('until'),
+                            ['class'=>'form-control','id'=>'datepicker']) !!}
 
                             <p><strong>Intervalo</strong></p>
-                            {!! Form::number('interval', $evento->rrule['interval'], ['class'=>'form-control','min'=>0]) !!}
+                            {!! Form::number('interval', $evento->rrule['interval'], ['class'=>'form-control','min'=>0])
+                            !!}
                         </div>
                     </div>
                 </div>
@@ -95,7 +98,7 @@
             <p><strong>Etiqueta</strong></p>
             {!! Form::select('etiqueta', $etiquetas, old('etiqueta'), ['class'=>'select2']) !!}
         </div>
-        
+
         <div class="col-sm-6">
             <p><strong>Usuarios</strong></p>
             {!! Form::select("users[]", $users, old('users'), ["class"=>"select2","multiple"=>"multiple"])

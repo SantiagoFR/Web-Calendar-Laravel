@@ -12,6 +12,7 @@ import BootstrapVue from 'bootstrap-vue'
 import VueFullCalendar from '@fullcalendar/vue'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import 'rrule/dist/es5/rrule.min.js';
+import "@fortawesome/fontawesome-free/css/all.css";
 
 
 Vue.use(BootstrapVue)
@@ -52,6 +53,10 @@ $("#datepicker").datetimepicker({
     timepicker:false});
 $("#datetimepicker").datetimepicker({
     format: 'd/m/Y H:i',
+});
+$('.select2').select2({
+    minimumResultsForSearch:Infinity,
+    theme: 'bootstrap4',
 });
 
 $("#datepicker").attr('autocomplete','off');
