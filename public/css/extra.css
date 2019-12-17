@@ -11,6 +11,15 @@ body {
 .form-control {
     margin-bottom: 15px;
 }
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    color: #fff;
+    background-color: #023265;
+}
+a {
+    color: #023265;
+    text-decoration: none;
+    background-color: transparent;
+}
 
 .select2-container {
     margin-bottom: 15px;

@@ -21,9 +21,9 @@ class EventoController extends Controller
      */
     public function index()
     {
-        $usuarios = User::select('name','id')->pluck('name','id');
-        $etiquetas = Etiqueta::select('name','id')->pluck('name','id');
-        return view('eventos.index',compact('usuarios','etiquetas'));
+        $usuarios = User::select('name', 'id')->pluck('name', 'id');
+        $etiquetas = Etiqueta::select('name', 'id')->pluck('name', 'id');
+        return view('eventos.index', compact('usuarios', 'etiquetas'));
     }
 
     /**
@@ -160,17 +160,16 @@ class EventoController extends Controller
 
     public function provide(Request $request)
     {
+
         $start = Carbon::parse($request->start);
         $end = Carbon::parse($request->end);
 
         $eventos = Evento::selectRaw('id,title,description,start,end,creator_id,etiqueta_id')
             ->whereraw("rrule_data is null AND start > '{$start}' AND end < '{$end}'")->with('creator')->get();
-        dump($start, $end);
+
         $eventos_recursivos = Evento::selectRaw('id,title,description,creator_id,etiqueta_id,rrule_data')
-            ->whereraw("rrule_data is not null")->with('creator')->get()->filter(function ($evento) use ($start) {
-                return $evento->dtstart > $start;
-            });
-        //throw new Exception()  
+            ->whereraw("rrule_data is not null")->with('creator')->get();
+         
         foreach ($eventos_recursivos as $evento) {
             $until = Carbon::parse($evento->rrule['until']);
             if ($until > $end) {
@@ -186,11 +185,21 @@ class EventoController extends Controller
                 $newEvento->start = $date;
                 $newEvento->etiqueta_id = $evento->etiqueta_id;
                 $newEvento->creator = $evento->creator;
-                $newEvento->end = $date->addHour()->format("Y-m-d G:i");
+                $newEvento->end = $date->addHour();
                 $eventos->push($newEvento);
             }
         }
 
-        return response()->json($eventos);
+        $eventos = $eventos->filter(function ($evento) use ($start, $end) {
+            dump($evento->start->gt($start));
+            return $evento->start->gt($start) && $evento->end->lt($end);
+        });
+
+        return response()->json($eventos->values());
+    }
+    
+    public function getUsers()
+    {
+        return response()->json(User::select('id', 'name')->get());
     }
 }

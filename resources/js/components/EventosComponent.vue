@@ -62,6 +62,7 @@ export default {
                 center: "title",
                 right: "etiquetasButton,newEventButton"
             },
+            users:[],
             eventRender: function(info) {
                 $(info.el).tooltip({
                     title:
@@ -83,6 +84,16 @@ export default {
     methods: {
         showEvents: function(params) {
             console.log(this.$refs.calendar.getApi().getEvents());
+        },
+        getUsers: function (params) {
+            axios.get("/users/getUsers", {
+                _method: "GET"
+            })
+            .then(response => {
+                const items = response.data;
+                console.log(response.data);
+                this.users = items;
+            });
         },
         eventClick: function(info) {
             var div = '<div align="center" id="swal-id"></div>';
@@ -117,6 +128,15 @@ export default {
 
 <template>
     <div>
+        <div class="row justify-content-center">
+            <div class="col-sm-6">
+            <p><strong>Búsqueda por usuario</strong></p>            
+            <b-form-select v-model="selected" :options="options"></b-form-select>
+            </div>
+            {!! Form::select('usuario', $usuarios, Auth::user()->id, ['class'=>'select2']) !!}
+            <p><strong>Búsqueda por etiqueta</strong></p>
+            {!! Form::select('etiqueta', $etiquetas, "", ['class'=>'select2']) !!}
+        </div>
         <FullCalendar
             ref="calendar"
             defaultView="dayGridMonth"
