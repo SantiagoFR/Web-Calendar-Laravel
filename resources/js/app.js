@@ -38,6 +38,8 @@ import 'jquery-ui/ui/i18n/datepicker-es'
 import 'jquery-datetimepicker/build/jquery.datetimepicker.full.js'
 import moment from 'moment/moment.js'
 import 'select2/dist/js/select2.full.js'
+import 'multiple-select/dist/multiple-select.min.js'
+import 'multiple-select/dist/multiple-select.min.css'
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -59,6 +61,11 @@ $('.select2').select2({
     theme: 'bootstrap4',
 });
 
+$('.select2-multi').select2({
+    multiple:true,
+    minimumResultsForSearch:Infinity,
+    theme: 'bootstrap4',
+});
 $("#datepicker").attr('autocomplete','off');
 $("#datetimepicker").attr('autocomplete','off');
 $("#from").attr('autocomplete','off');

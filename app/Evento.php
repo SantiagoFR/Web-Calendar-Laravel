@@ -65,6 +65,10 @@ class Evento extends Model
     {
         return $this->belongsTo(User::class)->select('users.id','name');
     }
+    public function request()
+    {
+        return $this->hasOne(Request::class);
+    }
     public function users()
     {
         return $this->belongsToMany(User::class)->select('users.id','name');

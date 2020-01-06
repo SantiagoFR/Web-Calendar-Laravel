@@ -8,12 +8,13 @@
                     <h2>Administracion de usuarios</h2>
                 </div>
                 <div class="col-sm-6">
-
                     <a href="{{ route('users.create') }}" class="btn btn-primary">Crear usuario</a>
                 </div>
             </div>
         </div>
+
         <users-component></users-component>
     </div>
+
 </div>
 @endsection

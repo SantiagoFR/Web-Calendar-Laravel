@@ -12,8 +12,10 @@ class PermisosTableSeeder extends Seeder
      */
     public function run()
     {
-        Permiso::create(['nombre'=>'profesor']);
-        Permiso::create(['nombre'=>'alumno']);
-        Permiso::create(['nombre'=>'administracion']);
+        Permiso::truncate();
+        Permiso::create(['nombre'=>'Admin']);
+        Permiso::create(['nombre'=>'Profesor']);
+        Permiso::create(['nombre'=>'Alumno']);
+        Permiso::create(['nombre'=>'Administracion']);
     }
 }

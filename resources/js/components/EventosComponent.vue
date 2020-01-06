@@ -37,36 +37,21 @@ export default {
                         window.location.href = "/etiquetas";
                     }
                 }
-            },
-            events: {
-                url: "/eventos/provide",
-                method:
-                    "GET" /*
-                extraParams: {
-                custom_param1: "something",
-                custom_param2: "somethingelse"
-                },*/,
-                failure: function() {
-                    console.log("Error");
-                },
-                success: function(response) {
-                    console.log(response);
-                },
-                color: "#023265", // a non-ajax option
-                textColor: "#fff" // a non-ajax option
-            },
-
+            },            
+            events: [],
             locale: esLocale,
             header: {
                 left: "prev,next today ",
                 center: "title",
                 right: "etiquetasButton,newEventButton"
             },
-            users:[],
+            users: [],
+            user: this.loggedUser,
+            etiqueta: '',
+            etiquetas: [],
             eventRender: function(info) {
                 $(info.el).tooltip({
-                    title:
-                        "<strong><p>" +
+                    title: "<strong><p>" +
                         info.event.title +
                         "</p></strong>" +
                         info.event.extendedProps.full_description +
@@ -81,19 +66,55 @@ export default {
             }
         };
     },
+    mounted: function() {
+        this.getUsers();
+        this.getEtiquetas();
+        this.getEvents();
+    },    
     methods: {
         showEvents: function(params) {
             console.log(this.$refs.calendar.getApi().getEvents());
         },
-        getUsers: function (params) {
-            axios.get("/users/getUsers", {
-                _method: "GET"
-            })
-            .then(response => {
+        getEtiquetas: function() {
+            axios
+                .get("/eventos/getEtiquetas", {
+                    _method: "GET"
+                })
+                .then(response => {
+                    const items = response.data;
+                    this.etiquetas = items;
+                });
+        },
+        getEvents: function(){
+            var start = this.$refs.calendar.getApi().view.activeStart
+            var end = this.$refs.calendar.getApi().view.activeEnd
+            var user = $('#user').val();      
+            if(user=='')user=null
+            var etiqueta = $('#etiqueta').val();      
+            if(etiqueta=='')etiqueta=null
+            axios.get("/eventos/provide", {
+                _method: "GET",
+                params: {
+                    start:start,
+                    end:end,
+                    user: user,
+                    etiqueta: etiqueta
+                }
+            }).then(response => {
                 const items = response.data;
-                console.log(response.data);
-                this.users = items;
+                console.log(response.data)
+                this.events = items;
             });
+        },
+        getUsers: function() {
+            axios
+                .get("/eventos/getUsers", {
+                    _method: "GET"
+                })
+                .then(response => {
+                    const items = response.data;
+                    this.users = items;
+                });
         },
         eventClick: function(info) {
             var div = '<div align="center" id="swal-id"></div>';
@@ -129,27 +150,21 @@ export default {
 <template>
     <div>
         <div class="row justify-content-center">
-            <div class="col-sm-6">
-            <p><strong>Búsqueda por usuario</strong></p>            
-            <b-form-select v-model="selected" :options="options"></b-form-select>
+            <div class="col-sm-3">
+                <p class="mt-5">
+                    <strong>Búsqueda por usuario</strong>
+                </p>
+                <b-form-select class="mb-3" v-model="user" :options="users" @change="getEvents" id="user"></b-form-select>
+                <p>
+                    <strong>Búsqueda por etiqueta</strong>
+                </p>
+                <b-form-select class="mb-3" v-model="etiqueta" :options="etiquetas" @change="getEvents" id="etiqueta"></b-form-select>
             </div>
-            {!! Form::select('usuario', $usuarios, Auth::user()->id, ['class'=>'select2']) !!}
-            <p><strong>Búsqueda por etiqueta</strong></p>
-            {!! Form::select('etiqueta', $etiquetas, "", ['class'=>'select2']) !!}
+            <div class="col-sm-9">
+                <FullCalendar ref="calendar" defaultView="dayGridMonth" :plugins="calendarPlugins" themeSystem="bootstrap" :customButtons="customButtons" 
+                :buttonIcons="buttonIcons" :header="header" :locale="locale" :eventRender="eventRender" @eventClick="eventClick" :events="events" :datesRender="getEvents" />
+            </div>
         </div>
-        <FullCalendar
-            ref="calendar"
-            defaultView="dayGridMonth"
-            :plugins="calendarPlugins"
-            themeSystem="bootstrap"
-            :customButtons="customButtons"
-            :buttonIcons="buttonIcons"
-            :header="header"
-            :locale="locale"
-            :eventRender="eventRender"
-            @eventClick="eventClick"
-            :events="events"
-        />
     </div>
 </template>
 

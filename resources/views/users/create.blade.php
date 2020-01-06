@@ -25,6 +25,12 @@
                         </div>
                     </div>
                     <div class="form-group row">
+                        {!! Form::label('username', 'Nombre de usuario', ['class'=>'col-sm-3 col-form-label']) !!}
+                        <div class="col-sm-9">
+                            {!! Form::text('username', old('username'), ['class'=>'form-control']) !!}                         
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         {!! Form::label('email', 'Email', ['class'=>'col-sm-3 col-form-label']) !!}
                         <div class="col-sm-9">
                             {!! Form::email('email', old('email'), ['class'=>'form-control']) !!}
@@ -41,6 +47,13 @@
                         col-form-label']) !!}
                         <div class="col-sm-9">
                             {!! Form::password('password_confirmation', ["class"=>"form-control"]) !!}                         
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        {!! Form::label('permiso', 'Permisos', ['class'=>'col-sm-3
+                        col-form-label']) !!}
+                        <div class="col-sm-9">
+                            {!! Form::select('permisos[]', $permisos, old('permisos'), ['class'=>'select2-multi','multiple'=>true]) !!}                     
                         </div>
                     </div>
                 </div>

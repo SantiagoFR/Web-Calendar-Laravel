@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Etiqueta;
 use App\Evento;
+use App\Permiso;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -34,7 +35,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('users.create');
+        $permisos = Permiso::all()->pluck('nombre','id');        
+        return view('users.create',compact('permisos'));
     }
 
     /**
@@ -46,16 +48,19 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => ['unique:users', 'required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
+            'username' => ['unique:users', 'required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'permisos' => ['required', 'array', 'min:1'],
             'password' => ['required', 'string', 'min:5', 'confirmed'],
         ]);
-
         $user = new User();
         $user->name = $request->name;
+        $user->username = $request->username;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
         $user->save();
+        $user->permisos()->attach($request->permisos);
         return redirect()->route('users.index');
     }
 
@@ -78,7 +83,8 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return view('users.edit',compact('user'));
+        $permisos = Permiso::all()->pluck('nombre','id'); 
+        return view('users.edit',compact('user','permisos'));
     }
 
     /**
@@ -91,9 +97,11 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $request->validate([
-            'name' => ['unique:users,name,'.$user->id, 'required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
+            'username' => ['unique:users,username,'.$user->id, 'required', 'string', 'max:255'],
             'email' => ['unique:users,email,'.$user->id,'required', 'string', 'email', 'max:255'],
             'password' => ['nullable', 'string', 'min:5', 'confirmed'],
+            'permisos' => ['required', 'array', 'min:1'],
         ]);
         $user->name = $request->name;
         $user->email = $request->email;
@@ -102,6 +110,8 @@ class UserController extends Controller
             $user->password = Hash::make($request->password);
         }
         $user->save();
+        $user->permisos()->detach();
+        $user->permisos()->attach($request->permisos);
         return redirect()->route('users.index');
     }
 
@@ -118,6 +128,6 @@ class UserController extends Controller
     }
     public function provide()
     {
-        return response()->json(User::select('id', 'name', 'email')->get());
+        return response()->json(User::select('id', 'name', 'email')->with('permisos')->get());
     }
 }

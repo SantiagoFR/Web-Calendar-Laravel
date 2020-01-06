@@ -26,7 +26,7 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         Gate::define("profesor",function($user){
-            
+            dd($user);
         });
     }
 }

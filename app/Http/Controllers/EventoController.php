@@ -72,6 +72,19 @@ class EventoController extends Controller
             return redirect()->back()->withInput()
                 ->withErrors($validator);
         }
+        $etiqueta = Etiqueta::find($request->etiqueta);
+        if($etiqueta!=null){
+            if($etiqueta->approval){  
+                $validator = Validator::make($request->all(), [
+                    'requestTitle' => ['required', 'string', 'max:255'],
+                    'requestDescription' => ['required', 'string', 'max:255'],
+                ]);       
+            }
+        }
+        if ($validator->fails()) {
+            return redirect()->back()->withInput()
+                ->withErrors($validator);
+        }
         $evento = new Evento();
         if (!$request->recursivo) {
             $evento->start = Carbon::createFromFormat('d/m/Y G:i', $request->start);
@@ -88,11 +101,13 @@ class EventoController extends Controller
         }
         $evento->title = $request->title;
         $evento->description = $request->description;
-        $evento->etiqueta_id = $request->etiqueta;
+        $evento->etiqueta_id = $request->etiqueta;        
         $evento->creator_id = Auth::user()->id;
         $evento->save();
         $evento->users()->attach(Auth::user());
         $evento->users()->attach($request->users);
+
+        
         return redirect()->route('eventos.index');
     }
 
@@ -163,12 +178,25 @@ class EventoController extends Controller
 
         $start = Carbon::parse($request->start);
         $end = Carbon::parse($request->end);
-
+        
+        $search=array();
+        if(!empty($request->etiqueta)||!empty($request->user)){
+            if(!empty($request->etiqueta)){
+                array_push($search,"etiqueta_id = '{$request->etiqueta}'");
+            }
+            if(!empty($request->user)){
+                array_push($search,"creator_id = '{$request->user}'");
+            }
+        }
+        $search_final = implode(" AND ",$search);  
+        if(!empty($search_final)){
+            $search_final = " AND " .$search_final;
+        }
         $eventos = Evento::selectRaw('id,title,description,start,end,creator_id,etiqueta_id')
-            ->whereraw("rrule_data is null AND start > '{$start}' AND end < '{$end}'")->with('creator')->get();
+            ->whereraw("rrule_data is null AND start > '{$start}' AND end < '{$end}' {$search_final}")->with('creator')->get();
 
         $eventos_recursivos = Evento::selectRaw('id,title,description,creator_id,etiqueta_id,rrule_data')
-            ->whereraw("rrule_data is not null")->with('creator')->get();
+            ->whereraw("rrule_data is not null {$search_final}")->with('creator')->get();
          
         foreach ($eventos_recursivos as $evento) {
             $until = Carbon::parse($evento->rrule['until']);
@@ -190,9 +218,8 @@ class EventoController extends Controller
             }
         }
 
-        $eventos = $eventos->filter(function ($evento) use ($start, $end) {
-            dump($evento->start->gt($start));
-            return $evento->start->gt($start) && $evento->end->lt($end);
+        $eventos = $eventos->filter(function ($evento) use ($start, $end) {  
+            return $evento->start->gt($start) && Carbon::parse($evento->end)->lt($end);
         });
 
         return response()->json($eventos->values());
@@ -200,6 +227,20 @@ class EventoController extends Controller
     
     public function getUsers()
     {
-        return response()->json(User::select('id', 'name')->get());
+        $usuarios=User::select('name as text','id as value')->orderBy('text')->get();
+        $vacio = new User;
+        $vacio->text = "Todos";
+        $vacio->value = "";
+        $usuarios->prepend($vacio);
+        return response()->json($usuarios);
+    }
+    public function getEtiquetas()
+    {
+        $etiquetas=Etiqueta::select('name as text','id as value')->orderBy('text')->get();
+        $vacio = new Etiqueta;
+        $vacio->text = "Todos";
+        $vacio->value = "";
+        $etiquetas->prepend($vacio);
+        return response()->json($etiquetas);
     }
 }

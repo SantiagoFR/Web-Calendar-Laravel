@@ -41,7 +41,7 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        {!! Form::label('username', 'Usuario', ['class'=>'col-sm-3 col-form-label']) !!}
+                        {!! Form::label('username', 'Nombre de usuario', ['class'=>'col-sm-3 col-form-label']) !!}
                         <div class="col-sm-9">
                             {!! Form::text('username', old('username'), ['class'=>'form-control']) !!}
                         </div>
@@ -75,7 +75,14 @@
                             </span>
                             @enderror
                         </div>
+                    </div>
 
+                    <div class="form-group row">
+                        {!! Form::label('permiso', 'Permisos', ['class'=>'col-sm-3
+                        col-form-label']) !!}
+                        <div class="col-sm-9">
+                            {!! Form::select('permisos[]', $permisos, old('permisos'), ['class'=>'select2-multi','multiple'=>true]) !!}                     
+                        </div>
                     </div>
                 </div>
             </div>
