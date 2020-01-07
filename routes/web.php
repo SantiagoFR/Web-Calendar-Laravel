@@ -11,11 +11,13 @@
 |
 */
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
-Route::group(['middleware' => ['auth']], function () {    
+Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/users/provide', 'UserController@provide')->name('users.provide');
     Route::resource('users', 'UserController');
@@ -28,4 +30,8 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/etiquetas/{etiqueta}/needApproval', 'EtiquetaController@needApproval')->name('eventos.needApproval');
     Route::resource('etiquetas', 'EtiquetaController');
+
+    Route::get('/peticions/{peticion}/update', 'PeticionController@update')->name('peticions.update');
+    Route::get('/peticions/{peticion}/destroy', 'PeticionController@destroy')->name('peticions.destroy');
+    Route::resource('peticions', 'PeticionController')->except(['update','destroy']);
 });

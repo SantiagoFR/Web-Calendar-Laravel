@@ -71,6 +71,7 @@ $("#datetimepicker").attr('autocomplete','off');
 $("#from").attr('autocomplete','off');
 $("#to").attr('autocomplete','off');
 
+$('[data-toggle="tooltip"]').tooltip();
 
 
 $(function () {

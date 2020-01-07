@@ -107,13 +107,13 @@
         <div class="col-sm-7">
             <p style="font-size:13px;text-align:right">*La etiqueta seleccionada requiere una aprobación, hasta que no sea aceptada, el evento no se mostrará</p>
         </div>
-        <div class="col-sm">            
+        <div class="col-sm">
             <div class="card card-body">
                <p><strong>Título de la solicitud</strong></p>
                {!! Form::text('requestTitle', old('requestTitle'), ['class'=>'form-control']) !!}
 
                 <p><strong>Descripción (opcional)</strong></p>
-                {!! Form::textarea('description', old('description'), ['id'=>'ckeditor2']) !!}
+                {!! Form::textarea('requestDescription', old('requestDescription'), ['id'=>'ckeditor2']) !!}
             </div>
         </div>
     </div>
@@ -126,18 +126,18 @@
     {!! Form::close() !!}
 </div>
 <script type="text/javascript">
-    @if(old('recursivo')) 
+    @if(old('recursivo'))
         $("input[name=recursivo]").val(1);
         $("#click-recursivo").addClass('active');
         $("#click-unico").removeClass('active');
         $("#unico").css('display','none');
-        $("#recursivo").css('display',''); 
+        $("#recursivo").css('display','');
     @endif
     $(document).ready(function() {
         $('.select2').select2({
             minimumResultsForSearch:Infinity,
             theme: 'bootstrap4',
-        });        
+        });
         $("#click-recursivo").click(function(e){
             e.preventDefault();
             $("input[name=recursivo]").val(1);
@@ -178,7 +178,7 @@
                 $('.collapse').collapse('hide')
             }
         });
-        
+
     });
 
 </script>

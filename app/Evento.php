@@ -52,7 +52,7 @@ class Evento extends Model
         return Carbon::parse($this->rrule['dtstart']);
     }
     public function formByweekdayAttribute()
-    {        
+    {
         if ($this->rrule_data == null)return null;
         return explode(",",$this->rrule['byweekday']);
     }
@@ -76,7 +76,7 @@ class Evento extends Model
     public function getBelongsAttribute(){
         if(Auth::user()->id == $this->creator_id)return true;
         if(in_array(Auth::user()->id,$this->users()->select('users.id')->get()->pluck('id')->toArray()))return true;
-        return false; 
+        return false;
     }
     public function getFullDescriptionAttribute()
     {
@@ -92,12 +92,12 @@ class Evento extends Model
         return "02:00";
     }
     public function getRruleAttribute()
-    {  
+    {
         if($this->rrule_data == null) return null;
         $rrule = explode(";",$this->rrule_data);
-        $until = Carbon::createFromFormat('d/m/Y',$rrule[4])->format("Y-m-d");   
-        $dtstart = Carbon::createFromFormat('d/m/Y G:i',"$rrule[3]")->format('Y-m-d\TG:i:s');     
-        return array( 'freq' => $rrule[0], 'interval' => $rrule[1], 
+        $until = Carbon::createFromFormat('d/m/Y',$rrule[4])->format("Y-m-d");
+        $dtstart = Carbon::createFromFormat('d/m/Y G:i',"$rrule[3]")->format('Y-m-d\TG:i:s');
+        return array( 'freq' => $rrule[0], 'interval' => $rrule[1],
         'dtstart' => $dtstart, 'until' => $until,'byweekday'=>$rrule[2]);
     }
 }

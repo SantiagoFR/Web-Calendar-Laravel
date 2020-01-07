@@ -24,9 +24,11 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-
+        Gate::before(function ($user, $ability) {
+            if($user->permisos()->find(1)!=null) return true;
+        });
         Gate::define("profesor",function($user){
-            dd($user);
+
         });
     }
 }
