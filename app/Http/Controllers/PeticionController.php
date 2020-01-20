@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Peticion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class PeticionController extends Controller
@@ -72,6 +73,7 @@ class PeticionController extends Controller
     public function update(Request $request, Peticion $peticion)
     {
         $peticion->confirmed = 1;
+        $peticion->responsable_id = Auth::user()->id;
         $peticion->save();
         Alert::success('Se ha confirmado la solicitud');
         return redirect()->route('peticions.index');

@@ -65,9 +65,9 @@ class Evento extends Model
     {
         return $this->belongsTo(User::class)->select('users.id','name');
     }
-    public function request()
+    public function peticion()
     {
-        return $this->hasOne(Request::class);
+        return $this->hasOne(Peticion::class);
     }
     public function users()
     {
@@ -85,7 +85,15 @@ class Evento extends Model
         }else{
             $etiqueta = "";
         }
-        return $this->description."<p><strong>Etiqueta: </strong>".$etiqueta."</p>";
+        $usuarios = "";
+        foreach($this->users as $user){
+            $usuarios .= "<p> - ".$user->name."</p>";
+        }
+        return "<div class=\"calendar\">".
+        $this->description.
+        "<p><strong>Etiqueta: </strong>".$etiqueta."</p>".
+        "<p><strong>Usuarios: </strong></p>".$usuarios.
+        "</div>";
     }
     public function formDurationAttribute()
     {

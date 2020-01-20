@@ -154,8 +154,8 @@ class EventoController extends Controller
             if(!empty($request->etiqueta)){
                 array_push($search,"etiqueta_id = '{$request->etiqueta}'");
             }
-            if(!empty($request->user)){
-                array_push($search,"creator_id = '{$request->user}'");
+            if(!empty($request->creator)){
+                array_push($search,"creator_id = '{$request->creator}'");
             }
         }
         $search_final = implode(" AND ",$search);
@@ -187,9 +187,17 @@ class EventoController extends Controller
                 $eventos->push($newEvento);
             }
         }
-
-        $eventos = $eventos->filter(function ($evento) use ($start, $end) {
-            return $evento->start->gt($start) && Carbon::parse($evento->end)->lt($end);
+        $user = $request->user;
+        dump($request->all());
+        $eventos = $eventos->filter(function ($evento) use ($start, $end, $user) {
+            $filtro = 1;
+            if($evento->peticion!=null)$filtro = $evento->peticion->confirmed;
+            dump($user,"REQUEST");
+            if($user!=null){
+                dump($evento->users()->find($user));
+                if($evento->users()->find($user)==null)$filtro=0;
+            }
+            return $evento->start->gt($start) && Carbon::parse($evento->end)->lt($end) && $filtro;
         });
 
         return response()->json($eventos->values());

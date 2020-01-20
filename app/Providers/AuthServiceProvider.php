@@ -28,7 +28,13 @@ class AuthServiceProvider extends ServiceProvider
             if($user->permisos()->find(1)!=null) return true;
         });
         Gate::define("profesor",function($user){
-
+            if($user->permisos()->find(2)!=null) return true;
+        });
+        Gate::define("alumno",function($user){
+            if($user->permisos()->find(3)!=null) return true;
+        });
+        Gate::define("administracion",function($user){
+            if($user->permisos()->find(4)!=null) return true;
         });
     }
 }

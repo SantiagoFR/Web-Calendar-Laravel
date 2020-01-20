@@ -16,4 +16,8 @@ class Peticion extends Model
             return "table-primary";
         }
     }
+    public function responsable()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

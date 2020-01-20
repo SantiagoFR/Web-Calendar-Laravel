@@ -6,4 +6,11 @@
         <eventos-component logged-user="{{Auth::user()->id}}"></eventos-component>
     </div>
 </div>
+<script>
+    @cannot(['profesor','administracion'])
+        $(document).ready(function(){
+            $(".fc-etiquetasButton-button").remove();
+        })
+    @endcan
+</script>
 @endsection

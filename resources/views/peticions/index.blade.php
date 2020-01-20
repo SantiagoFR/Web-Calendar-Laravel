@@ -22,7 +22,7 @@
                 @foreach($peticiones as $peticion)
                     <tr class="{{$peticion->color}}">
                         <td class="align-middle">{{ $peticion->evento->title }}</td>
-                        <td class="align-middle">{{ $peticion->title }}</td>
+                        <td class="align-middle">{!! $peticion->evento->description !!}</td>
                         <td class="align-middle">{{ $peticion->evento->start }} <br> {{ $peticion->evento->end }}</td>
                         <td class="align-middle">{{ $peticion->evento->etiqueta->name }}</td>
                         <td class="align-middle">
@@ -33,6 +33,10 @@
                                 <a href="{{route('peticions.update',$peticion)}}"
                                    class="btn btn-success btn-sm">Aceptar</a>
                                 <a href="{{route('peticions.destroy',$peticion)}}" class="btn btn-danger btn-sm">Rechazar</a>
+                            @else
+                                @isset($peticion->responsable)
+                                <button class="btn btn-info btn-sm" data-toggle="tooltip" title="Confirmado por {{$peticion->responsable->name}}">Conf. por {{$peticion->responsable->name}}</button>
+                                @endisset
                             @endif
                         </td>
                     </tr>
@@ -41,8 +45,8 @@
                             <div class="card card-body">
                                 <div class="row justify-content-center">
                                     <div class="col-sm">
-                                        <p><strong>Descripción del evento</strong></p>
-                                        <p>{!! $peticion->evento->description !!}</p>
+                                        <p><strong>Petición</strong></p>
+                                        <p>{!! $peticion->title !!}</p>
                                         <br>
                                         <p><strong>Comentario de la petición</strong></p>
                                         <p>{!! $peticion->description !!}</p>

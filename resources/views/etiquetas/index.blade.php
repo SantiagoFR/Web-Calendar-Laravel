@@ -9,7 +9,9 @@
                     <h2>Administracion de etiquetas</h2>
                 </div>
                 <div class="col-sm-6">
+                    @canany(['profesor','administracion'])
                     <button id="newEtiqueta" class="btn btn-primary">Crear etiqueta</button>
+                    @endcanany
                 </div>
             </div>
         </div>
