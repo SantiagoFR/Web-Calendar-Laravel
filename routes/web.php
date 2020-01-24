@@ -18,7 +18,7 @@ Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
 Route::group(['middleware' => 'admin'], function () {
-    
+
 });
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/users/provide', 'UserController@provide')->name('users.provide');
@@ -34,4 +34,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/peticions/{peticion}/update', 'PeticionController@update')->name('peticions.update');
     Route::get('/peticions/{peticion}/destroy', 'PeticionController@destroy')->name('peticions.destroy');
     Route::resource('peticions', 'PeticionController')->except(['update','destroy']);
+
+
+    Route::get('/etiquetas/{etiqueta}/needApproval', 'EtiquetaController@needApproval')->name('etiquetas.needApproval');
+    Route::get('/etiquetas/{etiqueta}/destroy', 'EtiquetaController@destroy')->name('etiquetas.destroy');
+    Route::resource('/etiquetas', 'EtiquetaController')->except(['destroy','show']);
 });

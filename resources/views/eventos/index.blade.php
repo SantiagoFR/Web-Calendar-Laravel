@@ -7,10 +7,10 @@
     </div>
 </div>
 <script>
-    @cannot(['profesor','administracion'])
+    @cannot('administracion')
         $(document).ready(function(){
             $(".fc-etiquetasButton-button").remove();
         })
-    @endcan
+    @endcannot
 </script>
 @endsection

@@ -5,10 +5,15 @@
         <div class="row justify-content-center">
             <div class="col">
                 <h4>Bienvenido, {{ Auth::user()->name }}</h4>
-                <p>Estos son los eventos más próximos a los que estás convocado</p>
+                @if($eventos->count()!=0)
+                    <p>Estos son los eventos más próximos a los que estás convocado</p>
+                @else
+                    <p>No tienes eventos pendientes</p>
+                @endif
             </div>
         </div>
         <br>
+        @if($eventos->count()!=0)
         <div class="row justify-content-center">
             <div class="col-sm-8">
                 <div id="carouselExampleControls" class="carousel vert slide" data-ride="carousel" data-interval="2700">
@@ -78,5 +83,6 @@
                 </a>
             </div>
         </div>
+        @endif
     </div>
 @endsection

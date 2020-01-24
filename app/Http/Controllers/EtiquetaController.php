@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Etiqueta;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class EtiquetaController extends Controller
 {
@@ -28,11 +29,13 @@ class EtiquetaController extends Controller
         $etiqueta->exclusive = $request->formValues['exclusive'];
         $etiqueta->approval = $request->formValues['approval'];
         $etiqueta->save();
-         
+
         return "Success";
     }
     public function needApproval(Etiqueta $etiqueta)
     {
+
+        if(Auth::user()->can('administracion')||Auth::user()->can('profesor')) return 0;
         return $etiqueta->approval;
     }
     public function edit(Etiqueta $etiqueta)
@@ -46,6 +49,7 @@ class EtiquetaController extends Controller
 
     public function destroy(Etiqueta $etiqueta)
     {
-        //
+        $etiqueta->delete();
+        return redirect()->route('etiquetas.index');
     }
 }

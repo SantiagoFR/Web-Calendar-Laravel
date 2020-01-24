@@ -102,7 +102,6 @@
                     }
                 }).then(response => {
                     const items = response.data;
-                    console.log(response.data)
                     this.events = items;
                 });
             },

@@ -9,9 +9,9 @@
                     <h2>Administracion de etiquetas</h2>
                 </div>
                 <div class="col-sm-6">
-                    @canany(['profesor','administracion'])
+                    @can('administracion')
                     <button id="newEtiqueta" class="btn btn-primary">Crear etiqueta</button>
-                    @endcanany
+                    @endcan
                 </div>
             </div>
         </div>
@@ -29,6 +29,7 @@
                     <td>{{ $etiqueta->name }}</td>
                     <td>@if($etiqueta->exclusive) Si @else No @endif</td>
                     <td>@if($etiqueta->approval) Si @else No @endif</td>
+                    <td align="center" style="text-align: right"><a href="{{ route('etiquetas.destroy',$etiqueta) }}" class="btn-sm btn-danger">Eliminar</a></td>
                 </tr>
                 @endforeach
             </tbody>
@@ -40,16 +41,16 @@
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#newEtiqueta').click(async function(){    
+        $('#newEtiqueta').click(async function(){
             const { value: formValues } = await Swal.fire({
                 title: 'Nueva etiqueta',
                 html:
                     '<label for="input1">Nombre</label>'+
                     '<input id="input1" name="name" class="swal2-input">'+
-                    '<label for="checkbox1">Exclusividad</label>'+
-                    '<input type="checkbox" name="exclusive" value="1" id="checkbox1">'+
-                    '<label for="checkbox2">Aprobación</label>'+
-                    '<input type="checkbox" name="approval" value="1" id="checkbox2">',
+                    '<label for="checkbox1">Exclusividad</label> '+
+                    '<input type="checkbox" name="exclusive" value="1" id="checkbox1"><br>'+
+                    '<label for="checkbox2">Aprobación</label> '+
+                    '<input type="checkbox" name="approval" value="1" id="checkbox2" class="swal2-checkbox">',
                 focusConfirm: false,
                 preConfirm: () => {
                     return {
@@ -62,15 +63,14 @@
             if (formValues) {
                 axios.post('/etiquetas',{
                     _method: "POST",
-                    formValues: formValues                
+                    formValues: formValues
                 }).then(response => {
-                    console.log(response)
                     window.location.reload(false);
                 });
             }
-        
+
         })
     });
-    
+
 </script>
 @endsection

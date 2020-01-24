@@ -38,7 +38,6 @@ class EventoController extends Controller
                 'start' => ['required', 'string', 'max:255'],
                 'end' => ['required', 'string', 'max:255'],
                 'etiqueta' => ['required', 'integer'],
-                'users' => ['required', 'array', 'min:1'],
             ]);
         } else {
             $validator = Validator::make($request->all(), [
@@ -49,7 +48,6 @@ class EventoController extends Controller
                 'freq' => ['required', 'string', 'max:255'],
                 'interval' => ['required', 'integer'],
                 'etiqueta' => ['required', 'integer'],
-                'users' => ['required', 'array', 'min:1'],
             ]);
         }
         if ($validator->fails()) {
@@ -58,7 +56,7 @@ class EventoController extends Controller
         }
         $etiqueta = Etiqueta::find($request->etiqueta);
         if($etiqueta!=null){
-            if($etiqueta->approval){
+            if($etiqueta->approval && !(Auth::user()->can('administracion')||Auth::user()->can('profesor'))){
                 $validator = Validator::make($request->all(), [
                     'requestTitle' => ['required', 'string', 'max:255'],
                     'requestDescription' => ['required', 'string', 'max:255'],
@@ -139,6 +137,7 @@ class EventoController extends Controller
     }
     public function destroy(Evento $evento)
     {
+        if($evento->peticion != null) $evento->peticion->delete();
         $evento->delete();
         return redirect()->route('eventos.index');
     }
@@ -188,13 +187,10 @@ class EventoController extends Controller
             }
         }
         $user = $request->user;
-        dump($request->all());
         $eventos = $eventos->filter(function ($evento) use ($start, $end, $user) {
             $filtro = 1;
             if($evento->peticion!=null)$filtro = $evento->peticion->confirmed;
-            dump($user,"REQUEST");
             if($user!=null){
-                dump($evento->users()->find($user));
                 if($evento->users()->find($user)==null)$filtro=0;
             }
             return $evento->start->gt($start) && Carbon::parse($evento->end)->lt($end) && $filtro;
