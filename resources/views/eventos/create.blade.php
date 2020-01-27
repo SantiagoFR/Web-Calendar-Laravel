@@ -99,7 +99,7 @@
 
         </div>
     </div>
-    <br>
+        <br>
     <div class="row collapse" id="request">
         <div class="col-sm-5">
             <h3>Solicitud de aprobación</h3>

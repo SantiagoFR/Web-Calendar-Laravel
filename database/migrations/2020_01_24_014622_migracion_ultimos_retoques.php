@@ -17,31 +17,31 @@ class MigracionUltimosRetoques extends Migration
             $table->unsignedBigInteger('permiso_id')->change();
             $table->foreign('permiso_id')
                 ->references('id')
-                ->on('permisos');
+                ->on('permisos')->onDelete('cascade');;
             $table->unsignedBigInteger('etiqueta_id')->change();
             $table->foreign('etiqueta_id')
                 ->references('id')
-                ->on('etiquetas');
+                ->on('etiquetas')->onDelete('cascade');;
         });
         Schema::table('evento_user', function (Blueprint $table) {
             $table->unsignedBigInteger('evento_id')->change();
             $table->foreign('evento_id')
                 ->references('id')
-                ->on('eventos');
+                ->on('eventos')->onDelete('cascade');
             $table->unsignedBigInteger('user_id')->change();
             $table->foreign('user_id')
                 ->references('id')
-                ->on('users');
+                ->on('users')->onDelete('cascade');
         });
         Schema::table('permiso_user', function (Blueprint $table) {
             $table->unsignedBigInteger('permiso_id')->change();
             $table->foreign('permiso_id')
                 ->references('id')
-                ->on('permisos');
+                ->on('permisos')->onDelete('cascade');;
             $table->unsignedBigInteger('user_id')->change();
             $table->foreign('user_id')
                 ->references('id')
-                ->on('users');
+                ->on('users')->onDelete('cascade');;
         });
         Schema::table('eventos', function (Blueprint $table) {
             $table->dropColumn('groupId');
@@ -51,17 +51,17 @@ class MigracionUltimosRetoques extends Migration
             $table->unsignedBigInteger('creator_id')->change();
             $table->foreign('creator_id')
                 ->references('id')
-                ->on('users');
+                ->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('etiqueta_id')->change();
             $table->foreign('etiqueta_id')
                 ->references('id')
-                ->on('etiquetas');
+                ->on('etiquetas')->onDelete('cascade');
         });
         Schema::table('peticions', function (Blueprint $table) {
             $table->unsignedBigInteger('evento_id')->change();
             $table->foreign('evento_id')
                 ->references('id')
-                ->on('eventos');
+                ->on('eventos')->onDelete('cascade');;
         });
     }
 
@@ -72,6 +72,28 @@ class MigracionUltimosRetoques extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('etiqueta_permiso', function (Blueprint $table) {
+            $table->dropForeign('etiqueta_permiso_etiqueta_id_foreign');
+            $table->dropForeign('etiqueta_permiso_permiso_id_foreign');
+        });
+        Schema::table('evento_user', function (Blueprint $table) {
+            $table->dropForeign('evento_user_user_id_foreign');
+            $table->dropForeign('evento_user_evento_id_foreign');
+        });
+        Schema::table('permiso_user', function (Blueprint $table) {
+            $table->dropForeign('permiso_user_user_id_foreign');
+            $table->dropForeign('permiso_user_permiso_id_foreign');
+        });
+        Schema::table('eventos', function (Blueprint $table) {
+            $table->string('groupId');
+            $table->string('allDay');
+            $table->string('editable');
+            $table->string('overlap');
+            $table->dropForeign('eventos_creator_id_foreign');
+            $table->dropForeign('eventos_etiqueta_id_foreign');
+        });
+        Schema::table('peticions', function (Blueprint $table) {
+            $table->dropForeign('peticions_evento_id_foreign');
+        });
     }
 }

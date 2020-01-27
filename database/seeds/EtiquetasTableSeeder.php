@@ -12,7 +12,6 @@ class EtiquetasTableSeeder extends Seeder
      */
     public function run()
     {
-        Etiqueta::truncate();
         Etiqueta::create(['name'=>'Sala de Grados','approval'=>1,'exclusive'=>1]);
         Etiqueta::create(['name'=>'Seminario','approval'=>0,'exclusive'=>1]);
         Etiqueta::create(['name'=>'Torneo LOL','approval'=>1,'exclusive'=>0]);

@@ -31,9 +31,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('eventos', 'EventoController')->except(['destroy', 'show']);
 
 
+    Route::match(['get','post'],'/peticions/index', 'PeticionController@index')->name('peticions.index');
     Route::get('/peticions/{peticion}/update', 'PeticionController@update')->name('peticions.update');
     Route::get('/peticions/{peticion}/destroy', 'PeticionController@destroy')->name('peticions.destroy');
-    Route::resource('peticions', 'PeticionController')->except(['update','destroy']);
+    Route::resource('peticions', 'PeticionController')->except(['index','update','destroy']);
 
 
     Route::get('/etiquetas/{etiqueta}/needApproval', 'EtiquetaController@needApproval')->name('etiquetas.needApproval');

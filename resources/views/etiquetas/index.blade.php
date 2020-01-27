@@ -29,7 +29,10 @@
                     <td>{{ $etiqueta->name }}</td>
                     <td>@if($etiqueta->exclusive) Si @else No @endif</td>
                     <td>@if($etiqueta->approval) Si @else No @endif</td>
-                    <td align="center" style="text-align: right"><a href="{{ route('etiquetas.destroy',$etiqueta) }}" class="btn-sm btn-danger">Eliminar</a></td>
+                    <td align="center" style="text-align: right">
+                        <button class="btn btn-sm btn-secondary" type="button" onclick="edit({{$etiqueta}})">Editar</button>
+                        <a href="{{ route('etiquetas.destroy',$etiqueta) }}" class="btn btn-sm btn-danger">Eliminar</a>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
@@ -52,6 +55,9 @@
                     '<label for="checkbox2">Aprobación</label> '+
                     '<input type="checkbox" name="approval" value="1" id="checkbox2" class="swal2-checkbox">',
                 focusConfirm: false,
+                confirmButtonText:"Enviar",
+                showCancelButton: true,
+                cancelButtonText:"Cancelar",
                 preConfirm: () => {
                     return {
                         name:document.getElementById('input1').value,
@@ -70,7 +76,48 @@
             }
 
         })
+
     });
+    async function edit(etiqueta) {
+        if(etiqueta.exclusive){
+            var checked1 = "checked";
+        }else{
+            var checked1 = "";
+        }
+        if(etiqueta.approval){
+            var checked2 = "checked";
+        }else{
+            var checked2 = "";
+        }
+        const { value: formValues } = await Swal.fire({
+            title: 'Editar etiqueta',
+            html:
+                '<label for="input1">Nombre</label>'+
+                '<input id="input1" name="name" class="swal2-input" value="'+etiqueta.name+'">'+
+                '<label for="checkbox1">Exclusividad</label> '+
+                '<input type="checkbox" name="exclusive" value="1" id="checkbox1" '+checked1+'><br>'+
+                '<label for="checkbox2">Aprobación</label> '+
+                '<input type="checkbox" name="approval" value="1" id="checkbox2" class="swal2-checkbox" '+checked2+'>',
+            focusConfirm: false,
+            confirmButtonText:"Enviar",
+            showCancelButton: true,
+            cancelButtonText:"Cancelar",
+            preConfirm: () => {
+                return {
+                    name:document.getElementById('input1').value,
+                    exclusive:$('#checkbox1').is(':checked'),
+                    approval:$('#checkbox2').is(':checked'),
+                }
+            }
+        })
+        if (formValues) {
+            axios.put('/etiquetas/'+etiqueta.id,{
+                formValues: formValues
+            }).then(response => {
+                window.location.reload(false);
+            });
+        }
+    }
 
 </script>
 @endsection

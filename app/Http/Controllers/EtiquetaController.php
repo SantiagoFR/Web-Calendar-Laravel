@@ -34,7 +34,6 @@ class EtiquetaController extends Controller
     }
     public function needApproval(Etiqueta $etiqueta)
     {
-
         if(Auth::user()->can('administracion')||Auth::user()->can('profesor')) return 0;
         return $etiqueta->approval;
     }
@@ -44,7 +43,12 @@ class EtiquetaController extends Controller
     }
     public function update(Request $request, Etiqueta $etiqueta)
     {
-        //
+        $etiqueta->name = $request->formValues['name'];
+        $etiqueta->exclusive = $request->formValues['exclusive'];
+        $etiqueta->approval = $request->formValues['approval'];
+        $etiqueta->save();
+
+        return "Success";
     }
 
     public function destroy(Etiqueta $etiqueta)

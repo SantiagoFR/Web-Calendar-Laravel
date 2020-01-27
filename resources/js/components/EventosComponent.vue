@@ -7,7 +7,7 @@
     import bootstrap from "@fullcalendar/bootstrap";
 
     export default {
-        props: ["loggedUser"],
+        props: ["loggedUser","admin"],
         components: {
             FullCalendar
         },
@@ -54,10 +54,8 @@
                         title: "<strong><p>" +
                             info.event.title +
                             "</p></strong>" +
-                            info.event.extendedProps.full_description +
-                            "<p><strong>Creado por: </strong>" +
-                            info.event.extendedProps.creator.name +
-                            "</p>",
+                            info.event.extendedProps.full_description
+                            ,
                         placement: "top",
                         trigger: "hover",
                         container: "body",
@@ -124,14 +122,14 @@
                     footer: div
                 });
                 var col = document.getElementById("swal-id");
-                if (this.loggedUser == info.event.extendedProps.creator_id) {
+                if (this.loggedUser == info.event.extendedProps.creator_id || this.admin) {
                     var delet =
                         '<a href="/eventos/' +
                         info.event.id +
                         '/destroy" class="btn btn-danger btn-footer">Eliminar</a>';
                     col.innerHTML += delet;
                 }
-                if (info.event.extendedProps.belongs) {
+                if (info.event.extendedProps.belongs || this.admin) {
                     var edit =
                         '<a href="/eventos/' +
                         info.event.id +

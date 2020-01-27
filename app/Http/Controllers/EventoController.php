@@ -59,13 +59,36 @@ class EventoController extends Controller
             if($etiqueta->approval && !(Auth::user()->can('administracion')||Auth::user()->can('profesor'))){
                 $validator = Validator::make($request->all(), [
                     'requestTitle' => ['required', 'string', 'max:255'],
-                    'requestDescription' => ['required', 'string', 'max:255'],
+                    'requestDescription' => ['nullable', 'string', 'max:255'],
                 ]);
             }
         }
         if ($validator->fails()) {
             return redirect()->back()->withInput()
                 ->withErrors($validator);
+        }
+        $start = Carbon::createFromFormat('d/m/Y G:i', $request->start);
+        $end = Carbon::createFromFormat('d/m/Y G:i', $request->end);
+        $eventos = Evento::whereraw("etiqueta_id = '{$etiqueta->id}' AND
+        ((start <= '{$start}' and end >= '{$start}') ||
+        (start <= '{$end}' and end >= '{$end}') ||
+        (start < '{$start}' and end > '{$end}') ||
+        (start >= '{$start}' and end <= '{$end}'))");
+        if ($eventos->count() != 0) {
+            return redirect()->back()->withInput()->withErrors([
+                'fecha' => 'Esa fecha no está disponible, hay un evento programado en ' . $etiqueta->name . ' desde ' .
+                    Carbon::parse($eventos->first()->start)->format('d-m-Y G:i') . ' hasta ' .
+                    Carbon::parse($eventos->first()->end)->format('d-m-Y G:i')
+            ]);
+        }
+        if(!Auth::user()->can('profesor') && !Auth::user()->can('administracion')){
+            $fecha_actual = now();
+            $eventos = Auth::user()->eventos()->whereraw("etiqueta_id = '{$etiqueta->id}' AND end > '{$fecha_actual}'");
+            if ($eventos->count() != 0) {
+                return redirect()->back()->withInput()->withErrors([
+                    'fecha' => 'Ya tienes un evento pendiente en esta etiqueta, para poder crear otro evento, debes esperar a que acabe'
+                ]);
+            }
         }
         $evento = new Evento();
         if (!$request->recursivo) {
