@@ -57,13 +57,6 @@
                         </div>
                     </div>
                     <div class="row" id="recursivo" style="display:none">
-                        <div class="col-sm-12">
-                            <p><strong>Días de la semana</strong></p>
-                            {!! Form::select("byweekday[]",
-                            ['mo'=>'Lunes','tu'=>'Martes','we'=>'Miércoles','th'=>'Jueves','fr'=>'Viernes','sa'=>'Sábado','su'=>'Domingo'],
-                            old('usuarios'), ["class"=>"select2","multiple"=>"multiple"])
-                            !!}
-                        </div>
                         <div class="col-sm-6">
                             <p><strong>Fecha de inicio</strong></p>
                             {!! Form::text('dtstart', old('dtstart'),

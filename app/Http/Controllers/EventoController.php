@@ -67,20 +67,28 @@ class EventoController extends Controller
             return redirect()->back()->withInput()
                 ->withErrors($validator);
         }
-        $start = Carbon::createFromFormat('d/m/Y G:i', $request->start);
-        $end = Carbon::createFromFormat('d/m/Y G:i', $request->end);
-        $eventos = Evento::whereraw("etiqueta_id = '{$etiqueta->id}' AND
-        ((start <= '{$start}' and end >= '{$start}') ||
-        (start <= '{$end}' and end >= '{$end}') ||
-        (start < '{$start}' and end > '{$end}') ||
-        (start >= '{$start}' and end <= '{$end}'))");
-        if ($eventos->count() != 0) {
-            return redirect()->back()->withInput()->withErrors([
-                'fecha' => 'Esa fecha no está disponible, hay un evento programado en ' . $etiqueta->name . ' desde ' .
-                    Carbon::parse($eventos->first()->start)->format('d-m-Y G:i') . ' hasta ' .
-                    Carbon::parse($eventos->first()->end)->format('d-m-Y G:i')
-            ]);
+        if($etiqueta->exclusive){
+            if ($request->recursivo) {
+                return redirect()->back()->withInput()->withErrors([
+                    'incompatible' => 'No se puede crear un evento recursivo en una etiqueta con exclusividad'
+                ]);
+            }
+            $start = Carbon::createFromFormat('d/m/Y G:i', $request->start);
+            $end = Carbon::createFromFormat('d/m/Y G:i', $request->end);
+            $eventos = Evento::whereraw("etiqueta_id = '{$etiqueta->id}' AND
+            ((start <= '{$start}' and end >= '{$start}') ||
+            (start <= '{$end}' and end >= '{$end}') ||
+            (start < '{$start}' and end > '{$end}') ||
+            (start >= '{$start}' and end <= '{$end}'))");
+            if ($eventos->count() != 0) {
+                return redirect()->back()->withInput()->withErrors([
+                    'fecha' => 'Esa fecha no está disponible, hay un evento programado en ' . $etiqueta->name . ' desde ' .
+                        Carbon::parse($eventos->first()->start)->format('d-m-Y G:i') . ' hasta ' .
+                        Carbon::parse($eventos->first()->end)->format('d-m-Y G:i')
+                ]);
+            }
         }
+        
         if(!Auth::user()->can('profesor') && !Auth::user()->can('administracion')){
             $fecha_actual = now();
             $eventos = Auth::user()->eventos()->whereraw("etiqueta_id = '{$etiqueta->id}' AND end > '{$fecha_actual}'");

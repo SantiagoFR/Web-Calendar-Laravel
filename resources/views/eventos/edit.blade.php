@@ -58,13 +58,6 @@
                             </div>
                         </div>
                         <div class="row" id="recursivo" style="display:none">
-                            <div class="col-sm-12">
-                                <p><strong>Días de la semana</strong></p>
-                                {!! Form::select("byweekday[]",
-                                ['mo'=>'Lunes','tu'=>'Martes','we'=>'Miércoles','th'=>'Jueves','fr'=>'Viernes','sa'=>'Sábado','su'=>'Domingo'],
-                                old('byweekday'), ["class"=>"select2","multiple"=>"multiple"])
-                                !!}
-                            </div>
                             <div class="col-sm-6">
                                 <p><strong>Fecha de inicio</strong></p>
                                 {!! Form::text('dtstart', old('dtstart'),
@@ -100,7 +93,7 @@
                     <div class="col-sm-8"><p style="font-size:13px;text-align:right">*Una vez creado el evento no se
                             puede cambiar la etiqueta</p></div>
                 </div>
-                {!! Form::select('etiqueta', $etiquetas, $evento->etiqueta_id, ['class'=>'select2']) !!}
+                {!! Form::select('etiqueta', $etiquetas, $evento->etiqueta_id, ['class'=>'select2','disabled','true']) !!}
                 {!! Form::hidden('etiqueta', $evento->etiqueta_id,['id'=>'etiquetas'] ) !!}
             </div>
 
@@ -154,20 +147,24 @@
         })
             .then(response => response.json())
             .then(jsonData => {
-                console.log($("#etiquetas").val())
                 if(jsonData){
                     $('#from').attr('readonly','true');
                     $('#to').attr('readonly','true')
+                    $('#byweekday').select2("destroy");
+                    $('#byweekday').replaceWith("<p>"+$("#byweekday").val()+"</p>");
+                    $('#to').attr('readonly','true')
+                    $('#from').attr('readonly','true');
                     $('#from').datetimepicker('destroy');
                     $('#to').datetimepicker('destroy');
                     $('input[name=dtstart]').datetimepicker('destroy');
                     $('input[name=until]').datetimepicker('destroy');
-                    $("select[name=etiqueta]").attr('disabled','true')
                 }else{
                     $("#etiquetas").attr('disabled','true')
                 }
             });
 
+            window.onload = function() {
+        CKEDITOR.replace( 'ckeditor' );
+    };
     </script>
-    @include('javascript.ckeditor')
 @endsection
