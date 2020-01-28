@@ -14,24 +14,19 @@
         </div>
         <br>
         @if($eventos->count()!=0)
-        <div class="row justify-content-center">
-            <div class="col-sm-8">
-                <div id="carouselExampleControls" class="carousel vert slide" data-ride="carousel" data-interval="2700">
-                    <ol class="carousel-indicators">
-                        @foreach ($eventos as $evento)
-                            @if ($evento->id == $eventos->first()->id)
-                                <li data-target="#carouselExampleIndicators" data-slide-to="{{ $evento->id }}"
-                                    class="active"></li>
-                            @else
-                                <li data-target="#carouselExampleIndicators" data-slide-to="{{ $evento->id }}"></li>
-                            @endif
-                        @endforeach
-                    </ol>
-                    <div class="carousel-inner">
-                        @foreach ($eventos as $evento)
-                            @if ($evento->id == $eventos->first()->id)
-                                <div class="carousel-item active">
-                                    @if ($evento->rrule_data==null)
+            <div class="row justify-content-center">
+                <div class="col-sm-8">
+                    <div id="carouselExampleControls" class="carousel slide" data-interval="false">
+                        <div class="carousel-inner">
+                            @php
+                                $first=1;
+                            @endphp
+                            @foreach ($eventos as $evento)
+                                @if ($first)
+                                    @php
+                                        $first=0;
+                                    @endphp
+                                    <div class="carousel-item active">
                                         <p><strong>{{ $evento->title }}</strong></p>
                                         <p><strong>{!! $evento->description !!}</strong></p>
                                         <p><strong>Desde: </strong> {{ $evento->start }}
@@ -39,50 +34,47 @@
                                         @isset($evento->etiqueta)
                                             <p><strong>Etiqueta: </strong>{{ $evento->etiqueta->name }}</p>
                                         @endisset
-                                    @else
+                                    </div>
+                                @else
+                                    <div class="carousel-item">
                                         <p><strong>{{ $evento->title }}</strong></p>
                                         <p><strong>{!! $evento->description !!}</strong></p>
-                                        <p><strong>Desde: </strong> {{ $evento->dtstart }}
-                                            <strong>Hasta: </strong>{{ $evento->end }}
-                                        </p>
+                                        <p><strong>Desde: </strong> {{ $evento->start }}
+                                            <strong>Hasta: </strong>{{ $evento->end }}</p>
                                         @isset($evento->etiqueta)
                                             <p><strong>Etiqueta: </strong>{{ $evento->etiqueta->name }}</p>
                                         @endisset
-                                    @endif
-                                </div>
-                            @else
-                                <div class="carousel-item">
-                                    @if ($evento->rrule_data==null)
-                                        <p><strong>{{ $evento->title }}</strong></p>
-                                        <p><strong>{!! $evento->description !!}</strong></p>
-                                        @isset($evento->etiqueta)
-                                            <p><strong>Etiqueta: </strong>{{ $evento->etiqueta->name }}</p>
-                                        @endisset
-                                    @else
-                                        <p><strong>{{ $evento->title }}</strong></p>
-                                        <p><strong>{!! $evento->description !!}</strong></p>
-                                        <p><strong>Desde: </strong> {{ $evento->dtstart }}
-                                            <strong>Hasta: </strong>{{ $evento->end }}
-                                        </p>
-                                        @isset($evento->etiqueta)
-                                            <p><strong>Etiqueta: </strong>{{ $evento->etiqueta->name }}</p>
-                                        @endisset
-                                    @endif
-                                </div>
-                            @endif
-                        @endforeach
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+                        <ol class="carousel-indicators">
+                            @php
+                                $first=1;
+                            @endphp
+                            @foreach ($eventos as $key=>$evento)
+                                @if ($first)
+                                    @php
+                                        $first=0;
+                                    @endphp
+                                    <li data-target="#carouselExampleControls" data-slide-to="{{ $key }}"
+                                        class="active"></li>
+                                @else
+                                    <li data-target="#carouselExampleControls" data-slide-to="{{ $key }}"></li>
+                                @endif
+                            @endforeach
+                        </ol>
                     </div>
+                    <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon bg-dark rounded-circle" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon bg-dark rounded-circle" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
                 </div>
-                <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-                    <span class="carousel-control-prev-icon bg-dark rounded-circle" aria-hidden="true"></span>
-                    <span class="sr-only">Previous</span>
-                </a>
-                <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-                    <span class="carousel-control-next-icon bg-dark rounded-circle" aria-hidden="true"></span>
-                    <span class="sr-only">Next</span>
-                </a>
             </div>
-        </div>
         @endif
     </div>
 @endsection

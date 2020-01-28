@@ -51,7 +51,6 @@
             <table class="table table-borderless table-bordered">
                 <tr>
                     <th>Nombre</th>
-                    <th>Descripción del evento</th>
                     <th>Fecha inicio/fin evento</th>
                     <th>Fecha solicitud</th>
                     <th>Etiqueta</th>
@@ -60,13 +59,12 @@
                 @foreach($peticiones as $peticion)
                     <tr class="{{$peticion->color}}">
                         <td class="align-middle">{{ $peticion->evento->title }}</td>
-                        <td class="align-middle">{!! $peticion->evento->description !!}</td>
-                        <td class="align-middle">
+                        <td style="width: 200px" class="align-middle">
                             @isset ($peticion->evento->rrule_data)
                                 {{$peticion->evento->dtstart}} <br>
                                 {{$peticion->evento->until}}
                             @else
-                            {{ $peticion->evento->start }} <br> {{ $peticion->evento->end }}
+                                {{ $peticion->evento->start }} <br> {{ $peticion->evento->end }}
                             @endif
                         </td>
                         <td class="align-middle">{{ $peticion->created_at }}</td>
@@ -81,7 +79,9 @@
                                 <a href="{{route('peticions.destroy',$peticion)}}" class="btn btn-danger btn-sm">Rechazar</a>
                             @else
                                 @isset($peticion->responsable)
-                                <button class="btn btn-info btn-sm" data-toggle="tooltip" title="Confirmado por {{$peticion->responsable->name}}">Conf. por {{$peticion->responsable->name}}</button>
+                                    <button class="btn btn-info btn-sm" data-toggle="tooltip"
+                                            title="Confirmado por {{$peticion->responsable->name}}">Conf.
+                                        por {{$peticion->responsable->name}}</button>
                                 @endisset
                             @endif
                         </td>
@@ -92,28 +92,29 @@
                                 <div class="row justify-content-center">
                                     <div class="col-sm">
                                         @isset ($peticion->evento->rrule_data)
-                                        <p>El evento se repetirá desde: {{$peticion->evento->dtstart}} 
-                                            hasta {{$peticion->evento->until}} cada {{$peticion->evento->rrule['interval']}}
-                                            @switch($peticion->evento->rrule['freq'])
-                                                @case('day')
-                                                     día/s 
+                                            <p>El evento se repetirá desde: {{$peticion->evento->dtstart}}
+                                                hasta {{$peticion->evento->until}}
+                                                cada {{$peticion->evento->rrule['interval']}}
+                                                @switch($peticion->evento->rrule['freq'])
+                                                    @case('day')
+                                                    día/s
                                                     @break
-                                                @case('month')
+                                                    @case('month')
                                                     mes/es
                                                     @break
                                                     @case('week')
-                                                        semana/s
-                                                        @break
-                                                @default
-                                                    
-                                            @endswitch
-                                        </p>
+                                                    semana/s
+                                                    @break
+                                                    @default
+                                                @endswitch
+                                            </p>
                                         @endif
+                                        <p><strong>Descripción del evento</strong></p>
+                                        <p>{!! $peticion->evento->description !!}</p>
                                         <p><strong>Petición</strong></p>
                                         <p>{!! $peticion->title !!}</p>
-                                        <br>
                                         <p><strong>Comentario de la petición</strong></p>
-                                        <p>{!! $peticion->description !!}</p>  
+                                        <p>{!! $peticion->description !!}</p>
                                     </div>
                                 </div>
                             </div>

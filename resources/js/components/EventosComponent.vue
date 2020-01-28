@@ -7,7 +7,7 @@
     import bootstrap from "@fullcalendar/bootstrap";
 
     export default {
-        props: ["loggedUser","admin"],
+        props: ["loggedUser", "admin"],
         components: {
             FullCalendar
         },
@@ -47,7 +47,6 @@
                 },
                 users: [],
                 user: this.loggedUser,
-                etiqueta: '',
                 etiquetas: [],
                 eventRender: function (info) {
                     $(info.el).tooltip({
@@ -55,7 +54,7 @@
                             info.event.title +
                             "</p></strong>" +
                             info.event.extendedProps.full_description
-                            ,
+                        ,
                         placement: "top",
                         trigger: "hover",
                         container: "body",
@@ -84,11 +83,14 @@
                     });
             },
             getEvents: function () {
-                var start = this.$refs.calendar.getApi().view.activeStart
-                var end = this.$refs.calendar.getApi().view.activeEnd
-                var user = $('#user').val();
-                if (user == '') user = null
-                var etiqueta = $('#etiqueta').val();
+                let start = this.$refs.calendar.getApi().view.activeStart
+                let end = this.$refs.calendar.getApi().view.activeEnd
+                if($('#my-events').is(":checked")){
+                    var user = this.loggedUser
+                }else{
+                    var user = null
+                }
+                let etiqueta = $('#etiqueta').val();
                 if (etiqueta == '') etiqueta = null
                 axios.get("/eventos/provide", {
                     _method: "GET",
@@ -122,6 +124,9 @@
                     footer: div
                 });
                 var col = document.getElementById("swal-id");
+                console.log(this.loggedUser)
+                console.log(info.event.extendedProps.creator_id)
+                console.log(this.admin)
                 if (this.loggedUser == info.event.extendedProps.creator_id || this.admin) {
                     var delet =
                         '<a href="/eventos/' +
@@ -146,18 +151,21 @@
 
 <template>
     <div>
-        <div class="row justify-content-center">
+        <div class="row justify-content-center mt-5">
             <div class="col-sm-3">
-                <p class="mt-5">
-                    <strong>Búsqueda por usuario</strong>
-                </p>
-                <b-form-select class="mb-3" v-model="user" :options="users" @change="getEvents" id="user"></b-form-select>
-                <p>
-                    <strong>Búsqueda por etiqueta</strong>
-                </p>
-                <b-form-select class="mb-3" v-model="etiqueta" :options="etiquetas" @change="getEvents" id="etiqueta"></b-form-select>
+                <div class="card mt-5">
+                    <div class="card-header">Filtros</div>
+                    <div class="card-body">
+                        <b-form-checkbox switch class="mb-3" v-model="allUsers" @change="getEvents" id="my-events"><strong>Mostrar sólo mis eventos</strong></b-form-checkbox>
+                        <p><strong>Búsqueda por título</strong></p>
+                        <b-form-input @change="getEvents" ></b-form-input>
+                        <p><strong>Búsqueda por etiqueta</strong></p>
+                        <b-form-select class="mb-3" v-model="etiqueta" :options="etiquetas" @change="getEvents"
+                                       id="etiqueta"></b-form-select>
+                    </div>
+                </div>
             </div>
-            <div class="col-sm-9">
+            <div class="col-sm-9 mt-n3">
                 <FullCalendar ref="calendar" defaultView="dayGridMonth" :plugins="calendarPlugins"
                               themeSystem="bootstrap" :customButtons="customButtons"
                               :buttonIcons="buttonIcons" :header="header" :locale="locale" :eventRender="eventRender"

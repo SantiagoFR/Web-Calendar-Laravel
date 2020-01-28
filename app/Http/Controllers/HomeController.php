@@ -27,28 +27,36 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $hoy = now()->format('Y-m-d')." 00:00:00";
-        $eventos = Auth::user()->eventos()->whereraw("start > '{$hoy}'")->take(10)->get();
-        $eventos_recursivos = Auth::user()->eventos()->whereraw("start is null AND end is null")->take(10)->get()
-        ->filter(function ($evento) use ($hoy) {
-            return $evento->until < $hoy;
-        });
+        $start = now()->format('Y-m-d') . " 00:00:00";
+        $end = now()->addMonths(2);
+        $eventos = Auth::user()->eventos()->whereraw("start > '{$start}' AND start < '{$end}'")->get();
+        $eventos_recursivos = Auth::user()->eventos()->whereraw("rrule_data is not null")->get()
+            ->filter(function ($evento) use ($start) {
+                return $evento->until->gt($start);
+            });
         foreach ($eventos_recursivos as $evento) {
             $until = Carbon::parse($evento->rrule['until']);
+            if ($until->gt($end)) {
+                $until = $end;
+            }
             $dtstart = Carbon::parse($evento->rrule['dtstart']);
             $period = CarbonPeriod::create($dtstart, "{$evento->rrule['interval']} {$evento->rrule['freq']}s", $until);
             foreach ($period as $date) {
-                $newEvento = new Evento();
-                $newEvento->id = $evento->id;
-                $newEvento->title = $evento->title;
-                $newEvento->description = $evento->description;
-                $newEvento->start = $date;
-                $newEvento->etiqueta_id = $evento->etiqueta_id;
-                $newEvento->creator = $evento->creator;
-                $newEvento->end = $date->addHour()->format("Y-m-d G:i");
-                $eventos->push($newEvento);
+                if ($date->gt($start)) {
+                    $newEvento = new Evento();
+                    $newEvento->id = $evento->id;
+                    $newEvento->title = $evento->title;
+                    $newEvento->description = $evento->description;
+                    $newEvento->start = $date;
+                    $newEvento->etiqueta_id = $evento->etiqueta_id;
+                    $newEvento->creator = $evento->creator;
+                    $newEvento->end = $date->addHour();
+                    $eventos->push($newEvento);
+                }
             }
-        } 
-        return view('home',compact('eventos'));
+        }
+        $eventos = $eventos->sortBy('start');
+
+        return view('home', compact('eventos'));
     }
 }

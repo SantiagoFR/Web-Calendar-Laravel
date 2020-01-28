@@ -1,4 +1,9 @@
-
+.carousel-indicators li{
+    background-color: #023265 !important;
+}
+.carousel-indicators {
+    bottom: -50px;
+}
 p {
     margin-bottom: 0px !important;
 }

@@ -47,6 +47,9 @@
                         </ul>
                     </div>
                     <div class="card-body">
+                        @if($evento->etiqueta->approval)
+                            <p style="font-size:13px;text-align:right">*</p>
+                        @endif
                         <div class="row" id="unico">
                             <div class="col-sm-6">
                                 <p><strong>Desde</strong></p>
@@ -141,30 +144,34 @@
                 $("#recursivo").css('display', 'none');
                 $("#unico").css('display', '');
             })
+            fetch("/etiquetas/" + $("#etiquetas").val() + "/needApproval", {
+                method: 'get'
+            })
+                .then(response => response.json())
+                .then(jsonData => {
+                    console.log(jsonData)
+                    if (jsonData) {
+                        $('#from').attr('readonly', 'true');
+                        $('#to').attr('readonly', 'true')
+                        $("select[name=freq]").select2({
+                            disabled: true,
+                            theme: 'bootstrap4',
+                        });
+                        $('input[name=interval]').attr('readonly', 'true');
+                        $('input[name=dtstart]').attr('readonly', 'true')
+                        $('input[name=until]').attr('readonly', 'true');
+                        $('#from').datetimepicker('destroy');
+                        $('#to').datetimepicker('destroy');
+                        $('input[name=dtstart]').datetimepicker('destroy');
+                        $('input[name=until]').datetimepicker('destroy');
+                    } else {
+                    }
+                });
         });
-        fetch("/etiquetas/"+$("#etiquetas").val()+"/needApproval", {
-            method: 'get'
-        })
-            .then(response => response.json())
-            .then(jsonData => {
-                if(jsonData){
-                    $('#from').attr('readonly','true');
-                    $('#to').attr('readonly','true')
-                    $('#byweekday').select2("destroy");
-                    $('#byweekday').replaceWith("<p>"+$("#byweekday").val()+"</p>");
-                    $('#to').attr('readonly','true')
-                    $('#from').attr('readonly','true');
-                    $('#from').datetimepicker('destroy');
-                    $('#to').datetimepicker('destroy');
-                    $('input[name=dtstart]').datetimepicker('destroy');
-                    $('input[name=until]').datetimepicker('destroy');
-                }else{
-                    $("#etiquetas").attr('disabled','true')
-                }
-            });
 
-            window.onload = function() {
-        CKEDITOR.replace( 'ckeditor' );
-    };
+
+        window.onload = function () {
+            CKEDITOR.replace('ckeditor');
+        };
     </script>
 @endsection
