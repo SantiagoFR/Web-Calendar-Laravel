@@ -48,6 +48,8 @@
                 users: [],
                 user: this.loggedUser,
                 etiquetas: [],
+                titulo: "",
+                descripcion:"",
                 eventRender: function (info) {
                     $(info.el).tooltip({
                         title: "<strong><p>" +
@@ -124,9 +126,6 @@
                     footer: div
                 });
                 var col = document.getElementById("swal-id");
-                console.log(this.loggedUser)
-                console.log(info.event.extendedProps.creator_id)
-                console.log(this.admin)
                 if (this.loggedUser == info.event.extendedProps.creator_id || this.admin) {
                     var delet =
                         '<a href="/eventos/' +
@@ -145,6 +144,17 @@
                     '<button class="btn btn-light btn-footer" onclick="Swal.close()">Atrás</button>';
                 col.innerHTML += cancel;
             }
+        },
+        computed:{
+            filteredEventos(){
+                if(this.titulo != "" || this.descripcion!=""){
+                    return this.events.filter(event => {
+                        return event.title.toLowerCase().includes(this.titulo.toLowerCase()) && event.description.toLowerCase().includes(this.descripcion.toLowerCase())
+                    })
+                }else{
+                    return this.events;
+                }
+            }
         }
     };
 </script>
@@ -158,7 +168,9 @@
                     <div class="card-body">
                         <b-form-checkbox switch class="mb-3" v-model="allUsers" @change="getEvents" id="my-events"><strong>Mostrar sólo mis eventos</strong></b-form-checkbox>
                         <p><strong>Búsqueda por título</strong></p>
-                        <b-form-input @change="getEvents" ></b-form-input>
+                        <b-form-input v-model="titulo"></b-form-input>
+                        <p><strong>Búsqueda por descripción</strong></p>
+                        <b-form-input v-model="descripcion"></b-form-input>
                         <p><strong>Búsqueda por etiqueta</strong></p>
                         <b-form-select class="mb-3" v-model="etiqueta" :options="etiquetas" @change="getEvents"
                                        id="etiqueta"></b-form-select>
@@ -169,7 +181,7 @@
                 <FullCalendar ref="calendar" defaultView="dayGridMonth" :plugins="calendarPlugins"
                               themeSystem="bootstrap" :customButtons="customButtons"
                               :buttonIcons="buttonIcons" :header="header" :locale="locale" :eventRender="eventRender"
-                              @eventClick="eventClick" :events="events" :datesRender="getEvents"/>
+                              @eventClick="eventClick" :events="filteredEventos" :datesRender="getEvents"/>
             </div>
         </div>
     </div>

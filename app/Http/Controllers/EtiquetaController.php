@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Etiqueta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class EtiquetaController extends Controller
 {
@@ -30,6 +31,8 @@ class EtiquetaController extends Controller
         $etiqueta->approval = $request->formValues['approval'];
         $etiqueta->save();
 
+        Alert::success("Etiqueta creada", "La etiqueta '{$etiqueta->name}' ha sido creada correctamente");
+
         return "Success";
     }
     public function needApproval(Etiqueta $etiqueta)
@@ -48,12 +51,13 @@ class EtiquetaController extends Controller
         $etiqueta->exclusive = $request->formValues['exclusive'];
         $etiqueta->approval = $request->formValues['approval'];
         $etiqueta->save();
-
+        Alert::success("Etiqueta modificada", "La etiqueta '{$etiqueta->name}' ha sido modificada correctamente");
         return "Success";
     }
 
     public function destroy(Etiqueta $etiqueta)
     {
+        Alert::success("Etiqueta eliminada", "La etiqueta '{$etiqueta->name}' ha sido eliminada correctamente");
         $etiqueta->delete();
         return redirect()->route('etiquetas.index');
     }

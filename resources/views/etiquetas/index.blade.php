@@ -10,7 +10,7 @@
                 </div>
                 <div class="col-sm-6">
                     @can('administracion')
-                    <button id="newEtiqueta" class="btn btn-primary">Crear etiqueta</button>
+                    <button id="newEtiqueta" class="btn btn-sm btn-info">Crear etiqueta</button>
                     @endcan
                 </div>
             </div>
@@ -47,13 +47,14 @@
         $('#newEtiqueta').click(async function(){
             const { value: formValues } = await Swal.fire({
                 title: 'Nueva etiqueta',
-                html:
+                html:'<div id="swal2-create">'+
                     '<label for="input1">Nombre</label>'+
                     '<input id="input1" name="name" class="swal2-input">'+
                     '<label for="checkbox1">Exclusividad</label> '+
                     '<input type="checkbox" name="exclusive" value="1" id="checkbox1"><br>'+
                     '<label for="checkbox2">Aprobación</label> '+
-                    '<input type="checkbox" name="approval" value="1" id="checkbox2" class="swal2-checkbox">',
+                    '<input type="checkbox" name="approval" value="1" id="checkbox2" class="swal2-checkbox">'+
+                    '</div>',
                 focusConfirm: false,
                 confirmButtonText:"Enviar",
                 showCancelButton: true,
@@ -91,13 +92,14 @@
         }
         const { value: formValues } = await Swal.fire({
             title: 'Editar etiqueta',
-            html:
+            html:'<div id="swal2-create">'+
                 '<label for="input1">Nombre</label>'+
                 '<input id="input1" name="name" class="swal2-input" value="'+etiqueta.name+'">'+
                 '<label for="checkbox1">Exclusividad</label> '+
                 '<input type="checkbox" name="exclusive" value="1" id="checkbox1" '+checked1+'><br>'+
                 '<label for="checkbox2">Aprobación</label> '+
-                '<input type="checkbox" name="approval" value="1" id="checkbox2" class="swal2-checkbox" '+checked2+'>',
+                '<input type="checkbox" name="approval" value="1" id="checkbox2" class="swal2-checkbox" '+checked2+'>'+
+                '</div>',
             focusConfirm: false,
             confirmButtonText:"Enviar",
             showCancelButton: true,
