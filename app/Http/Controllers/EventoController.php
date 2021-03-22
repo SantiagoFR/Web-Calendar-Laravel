@@ -58,7 +58,7 @@ class EventoController extends Controller
         }
         $etiqueta = Etiqueta::find($request->etiqueta);
         if ($etiqueta != null) {
-            if ($etiqueta->approval && !(Auth::user()->can('administracion') && !Auth::user()->can('profesor'))) {
+            if ($etiqueta->approval && !(Auth::user()->can('administracion')) && !(Auth::user()->can('profesor'))) {
                 $validator = Validator::make($request->all(), [
                     'requestTitle' => ['required', 'string', 'max:255'],
                     'requestDescription' => ['nullable', 'string', 'max:255'],
